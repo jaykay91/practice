@@ -16,17 +16,6 @@ const numberBtns = document.querySelectorAll('.js-num-btn')
 
   버튼을 누르면 -> 숫자 변경
   연산자를 누르면 연산 대기
-
-
-
-
-
-
-
-
-
-
-
  */
 
 const calculator = {
@@ -63,7 +52,12 @@ const calculator = {
 const putNumberToScreen = num => screen.textContent = `${num}`
 putNumberToScreen(calculator.screenNumber)
 
-
+const eraseLastNumber = num => {
+  const stringNum = `${num}`
+  const slicedStr = stringNum.slice(0, stringNum.length - 1)
+  const erasedNum = parseInt(slicedStr)
+  return erasedNum
+}
 
 const operations = {
   '+'(a, b) { return a + b },
