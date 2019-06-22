@@ -2,11 +2,10 @@ const screen = document.querySelector('.js-screen')
 const operationBtns = document.querySelectorAll('.js-oper-btn')
 const numberBtns = document.querySelectorAll('.js-num-btn')
 
-// const cal = {
-//   screenNum: '0',
-//   bufNum: 0,
-//   bufOper
-// }
+const calculatorData = {
+  number: 0,
+  operation: () => {}, 
+}
 
 /* 
   내부 상태를 가지는 계산기 구조체
@@ -33,17 +32,19 @@ const calculator = {
 
     const concatnum = removeCommaFromNumber(this.screenNumber) + num
     
-    const makeNumberWithComma = strnum => {
-      const arr = strnum.split('')
-      let strbuf = arr.splice(-3).join('')
+    // const makeNumberWithComma = strnum => {
+    //   const arr = strnum.split('')
+    //   let strbuf = arr.splice(-3).join('')
 
-      while (arr.length) {
-        const slarr = arr.splice(-3)
-        strbuf = `${slarr.join('')},${strbuf}`
-      }
+    //   while (arr.length) {
+    //     const slarr = arr.splice(-3)
+    //     strbuf = `${slarr.join('')},${strbuf}`
+    //   }
 
-      return strbuf
-    }
+    //   return strbuf
+    // }
+
+
 
     this.screenNumber = makeNumberWithComma(concatnum)
   },
@@ -51,6 +52,29 @@ const calculator = {
 
 const putNumberToScreen = num => screen.textContent = `${num}`
 putNumberToScreen(calculator.screenNumber)
+
+const makeNumberWithComma = num => {
+  const strnum = `${num}`
+  if (strnum.length < 4) return strnum
+  
+  // 뒤에서부터 문자열을 잘라서 새로운 문자열을 반환
+  const spliceBack = (str, backIdx) => {
+    const idx = str.length - backIdx
+    const splstr = str.slice(idx)
+    const reststr = str.slice(0, idx)
+    return { splstr, reststr }
+  }
+  
+  let { splstr, reststr } = spliceBack(strnum, 3)
+  const arr = [splstr]
+  while (reststr.length >= 4) {
+    ({ splstr, reststr } = spliceBack(reststr, 3))
+    arr.unshift(splstr)
+  }
+  arr.unshift(reststr)
+
+  return arr.join(',')
+}
 
 const eraseLastNumber = num => {
   const stringNum = `${num}`
