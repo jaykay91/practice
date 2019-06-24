@@ -1,113 +1,97 @@
 const screen = document.querySelector('.js-screen')
 const operationBtns = document.querySelectorAll('.js-oper-btn')
 const numberBtns = document.querySelectorAll('.js-num-btn')
+const backBtn = document.querySelector('.js-back-btn')
+const cBtn = document.querySelector('.js-c-btn')
 
 const calculatorData = {
-  number: 0,
+  number: '0',
   operation: () => {}, 
 }
 
-/* 
-  내부 상태를 가지는 계산기 구조체
-  모든 side effect 또는 side cause 는
-  이벤트(입력), 상태 변경(출력), dom접근(입력)
-  dom변경(출력)
-
-  버튼을 누르면 -> 숫자 변경
-  연산자를 누르면 연산 대기
- */
-
-const calculator = {
-  screenNumber: '0',
-  setScreenNumber(num) {
-    if (this.screenNumber === '0') {
-      this.screenNumber = num
-      return
-    }
-
-    const removeCommaFromNumber = strnum => {
-      const arr = strnum.split(',')  
-      return arr.join('')
-    }
-
-    const concatnum = removeCommaFromNumber(this.screenNumber) + num
-    
-    // const makeNumberWithComma = strnum => {
-    //   const arr = strnum.split('')
-    //   let strbuf = arr.splice(-3).join('')
-
-    //   while (arr.length) {
-    //     const slarr = arr.splice(-3)
-    //     strbuf = `${slarr.join('')},${strbuf}`
-    //   }
-
-    //   return strbuf
-    // }
-
-
-
-    this.screenNumber = makeNumberWithComma(concatnum)
-  },
+const operations = {
+  ['+'](a, b) { return a + b },
+  ['-'](a, b) { return a - b },
+  ['*'](a, b) { return a*b },
+  ['/'](a, b) { return a/b },
 }
 
-const putNumberToScreen = num => screen.textContent = `${num}`
-putNumberToScreen(calculator.screenNumber)
+const changeStrnumToNumber = strnum => parseInt(strnum)
 
-const makeNumberWithComma = num => {
+const concatNumber = (oldnum, newnum) => {
+  if (oldnum === '0') return newnum
+  return `${oldnum}${newnum}`
+}
+
+const normalizeNumber = strnum => {
+  const arr = strnum.split(',')
+  return arr.join('')
+}
+
+const makeNumberUsingComma = num => {
   const strnum = `${num}`
-  if (strnum.length < 4) return strnum
-  
-  // 뒤에서부터 문자열을 잘라서 새로운 문자열을 반환
-  const spliceBack = (str, backIdx) => {
-    const idx = str.length - backIdx
-    const splstr = str.slice(idx)
-    const reststr = str.slice(0, idx)
-    return { splstr, reststr }
-  }
-  
-  let { splstr, reststr } = spliceBack(strnum, 3)
-  const arr = [splstr]
-  while (reststr.length >= 4) {
-    ({ splstr, reststr } = spliceBack(reststr, 3))
-    arr.unshift(splstr)
-  }
-  arr.unshift(reststr)
+  const arr = strnum.split('')
+  let strbuf = arr.splice(-3).join('')
 
-  return arr.join(',')
+  while (arr.length) {
+    const slarr = arr.splice(-3)
+    strbuf = `${slarr.join('')},${strbuf}`
+  }
+
+  return strbuf
 }
 
 const eraseLastNumber = num => {
   const stringNum = `${num}`
   const slicedStr = stringNum.slice(0, stringNum.length - 1)
   const erasedNum = parseInt(slicedStr)
+
   return erasedNum
 }
 
-const operations = {
-  '+'(a, b) { return a + b },
-  '-'(a, b) { return a - b },
-  '/'(a, b) { return a/b },
-  '*'(a, b) { return a*b },
-  Back() {
-    console.log('Back')
+/* 
+  1. 숫자 계속 추가하기
+  2. 지우기 버튼 
+ */
+const onClickButton = {
+  number(newnum) {
+    const oldnum = calculatorData.number
+    const normnum = normalizeNumber(oldnum)
+    const connum = concatNumber(normnum, newnum)
+    const commanum = makeNumberUsingComma(connum)
+
+    calculatorData.number = commanum
+    console.log(calculatorData.number)
   },
-  C() {
-    console.log(C)
+  operation(oper) {
+    const operation = operations[oper]
+    calculatorData.operation = operation
+    console.log(calculatorData)
+  },
+  c() {
+
+  },
+  back() {
+
   },
 }
 
+
 operationBtns.forEach(el => el.addEventListener('click', e => {
   const op = e.target.textContent
-  console.log(operations[op])
-
+  const state = onClickButton.operation(op)
 }))
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
   const number = e.target.textContent
-  console.log(number)
-  calculator.setScreenNumber(number)
-  putNumberToScreen(calculator.screenNumber)
+  const state = onClickButton.number(number)
 }))
+backBtn.addEventListener('click', e => {
+  
+})
+cBtn.addEventListener('click', e => {
+  
+})
 
 
 
