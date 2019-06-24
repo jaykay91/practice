@@ -41,13 +41,8 @@ const makeNumberUsingComma = num => {
   return strbuf
 }
 
-const eraseLastNumber = num => {
-  const stringNum = `${num}`
-  const slicedStr = stringNum.slice(0, stringNum.length - 1)
-  const erasedNum = parseInt(slicedStr)
-
-  return erasedNum
-}
+const eraseLastNumber = strnum => 
+  strnum.length === 1 ? strnum : strnum.slice(0, strnum.length - 1)
 
 /* 
   1. 숫자 계속 추가하기
@@ -61,7 +56,6 @@ const onClickButton = {
     const commanum = makeNumberUsingComma(connum)
 
     calculatorData.number = commanum
-    console.log(calculatorData.number)
   },
   operation(oper) {
     const operation = operations[oper]
@@ -69,10 +63,15 @@ const onClickButton = {
     console.log(calculatorData)
   },
   c() {
-
+    calculatorData.number = '0'
   },
   back() {
+    const curnum = calculatorData.number
+    const nornum = normalizeNumber(curnum)
+    const eranum = eraseLastNumber(nornum)
+    const comnum = makeNumberUsingComma(eranum)
 
+    calculatorData.number = comnum
   },
 }
 
@@ -87,13 +86,11 @@ numberBtns.forEach(el => el.addEventListener('click', e => {
   const state = onClickButton.number(number)
 }))
 backBtn.addEventListener('click', e => {
-  
+  const state = onClickButton.back()
 })
 cBtn.addEventListener('click', e => {
-  
+  const state = onClickButton.c()
 })
-
-
 
 /*
   할 일 목록
