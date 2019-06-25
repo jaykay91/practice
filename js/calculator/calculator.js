@@ -1,8 +1,23 @@
-const screen = document.querySelector('.js-screen')
 const operationBtns = document.querySelectorAll('.js-oper-btn')
 const numberBtns = document.querySelectorAll('.js-num-btn')
 const backBtn = document.querySelector('.js-back-btn')
 const cBtn = document.querySelector('.js-c-btn')
+
+const createRender = ({ selector, stateName }) => {
+  const element = document.querySelector(selector)
+  const mapper = {
+    [stateName]: element
+  }
+  
+  return store => {
+    const val = store[stateName]
+    mapper[stateName].textContent = val
+  }
+}
+const render = createRender({ 
+  selector: '.js-screen', 
+  stateName: 'number', 
+})
 
 const calculatorData = {
   number: '0',
@@ -44,10 +59,6 @@ const makeNumberUsingComma = num => {
 const eraseLastNumber = strnum => 
   strnum.length === 1 ? strnum : strnum.slice(0, strnum.length - 1)
 
-/* 
-  1. 숫자 계속 추가하기
-  2. 지우기 버튼 
- */
 const onClickButton = {
   number(newnum) {
     const oldnum = calculatorData.number
@@ -58,9 +69,9 @@ const onClickButton = {
     calculatorData.number = commanum
   },
   operation(oper) {
-    const operation = operations[oper]
-    calculatorData.operation = operation
-    console.log(calculatorData)
+    // const operation = operations[oper]
+    // calculatorData.operation = operation
+    // console.log(calculatorData)
   },
   c() {
     calculatorData.number = '0'
@@ -77,25 +88,29 @@ const onClickButton = {
 
 
 operationBtns.forEach(el => el.addEventListener('click', e => {
-  const op = e.target.textContent
-  const state = onClickButton.operation(op)
+  // const op = e.target.textContent
+  // const state = onClickButton.operation(op)
+  console.log(calculatorData)
 }))
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
   const number = e.target.textContent
-  const state = onClickButton.number(number)
+  onClickButton.number(number)
+  render(calculatorData)
 }))
 backBtn.addEventListener('click', e => {
-  const state = onClickButton.back()
+  onClickButton.back()
+  render(calculatorData)
 })
 cBtn.addEventListener('click', e => {
-  const state = onClickButton.c()
+  onClickButton.c()
+  render(calculatorData)
 })
 
 /*
   할 일 목록
-    2. 숫자 지우기 버튼 만들기
-    3. 연산자...
+    1. 연산 기능 추가
+    2. 렌더링 기능 추가
   
   공부 목록
     0. 축약 패턴
