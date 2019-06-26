@@ -9,26 +9,44 @@ const createRender = ({ selector, stateName }) => {
     [stateName]: element
   }
   
-  return store => {
-    const val = store[stateName]
+  return state => {
+    const val = state[stateName]
     mapper[stateName].textContent = val
   }
 }
 const render = createRender({ 
   selector: '.js-screen', 
-  stateName: 'number', 
+  stateName: 'screen', 
 })
 
-const calculatorData = {
-  number: '0',
-  operation: () => {}, 
+let state = {
+  screen: '0',
+  buffers: [],
+  last: null,
+  number: 0,
+  operation: null,
 }
+
+const setState = newState => state = Object.assign({}, state, newState)
+const getState = () => state
+
+render(state);
 
 const operations = {
   ['+'](a, b) { return a + b },
   ['-'](a, b) { return a - b },
   ['*'](a, b) { return a*b },
   ['/'](a, b) { return a/b },
+}
+
+const updateArray = (oldarr, ...args) => [...oldarr, ...args]
+const changeLastBuffer = oldarr => {
+  if (oldarr.length === 0) {
+
+  }
+
+
+  return newarr
 }
 
 const changeStrnumToNumber = strnum => parseInt(strnum)
@@ -61,50 +79,70 @@ const eraseLastNumber = strnum =>
 
 const onClickButton = {
   number(newnum) {
-    const oldnum = calculatorData.number
+    const { screen: oldnum } = getState()
+
+    
     const normnum = normalizeNumber(oldnum)
     const connum = concatNumber(normnum, newnum)
+    const number = parseInt(connum)
     const commanum = makeNumberUsingComma(connum)
-
-    calculatorData.number = commanum
+    setState({ screen: commanum, last: 'number', number })
   },
-  operation(oper) {
-    // const operation = operations[oper]
-    // calculatorData.operation = operation
-    // console.log(calculatorData)
+  operation(operation) {
+    const { buffers, last, number } = getState()
+
+    if (last === 'number') {
+      const newbuffers = updateArray(buffers, number)
+      setState({ 
+        last: 'operation', 
+        buffers: newbuffers,
+        operation,
+      })
+      return
+    } 
+
+    if (last === 'operation') {
+      setState({ 
+        last: 'operation', 
+        operation,
+      })
+      return
+    }
   },
   c() {
-    calculatorData.number = '0'
+    setState({ screen: '0', number: 0 })
   },
   back() {
-    const curnum = calculatorData.number
+    const { screen: curnum } = getState()
     const nornum = normalizeNumber(curnum)
     const eranum = eraseLastNumber(nornum)
+    const number = parseInt(eranum)
     const comnum = makeNumberUsingComma(eranum)
-
-    calculatorData.number = comnum
+    setState({ screen: comnum, number })
   },
 }
 
 
 operationBtns.forEach(el => el.addEventListener('click', e => {
-  // const op = e.target.textContent
-  // const state = onClickButton.operation(op)
-  console.log(calculatorData)
+  const op = e.target.textContent
+  onClickButton.operation(op)
+  console.log(state)
 }))
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
   const number = e.target.textContent
   onClickButton.number(number)
-  render(calculatorData)
+  render(state)
+  console.log(state)
+
 }))
 backBtn.addEventListener('click', e => {
   onClickButton.back()
-  render(calculatorData)
+  render(state)
 })
 cBtn.addEventListener('click', e => {
   onClickButton.c()
-  render(calculatorData)
+  render(state)
 })
 
 /*
