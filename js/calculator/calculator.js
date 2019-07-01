@@ -47,21 +47,6 @@ const getState = () => state
 
 render(state);
 
-const createMatch = (mapper) => {
-  return (branch, state) => mapper[branch](state)
-}
-
-const createMap = (mapper) => {
-  return prop => mapper[prop]
-}
-
-const mapOperator = createMap({
-  ['+'](a, b) { return a + b },
-  ['-'](a, b) { return a - b },
-  ['*'](a, b) { return a*b },
-  ['/'](a, b) { return a/b },
-})
-
 const updateArray = (oldarr, ...args) => [...oldarr, ...args]
 
 const concatNumber = (oldnum, newnum) => {
@@ -83,37 +68,31 @@ const onClickButton = {
   number(newnum) {
     const { number, wait, operator, buffers } = getState()
 
-    const matchWaitState = createMatch({
-      NUMBER({ number, newnum }) {
-        const connum = concatNumber(number, newnum)
-        return { number: connum }
-      },
-      OPERATOR({ newnum, operator, buffers }) {
-        const newBuffers = updateArray(buffers, operator)
-        return { wait: 'NUMBER', number: newnum, buffers: newBuffers }
-      },
-    })
-    const nextState = matchWaitState(wait, { number, newnum, operator, buffers })
+    let newState = {};
+    if (wait === 'NUMBER') {
+      const connum = concatNumber(number, newnum)
+      newState = { number: connum }
+    } else if (wait === 'OPERATOR') {  
+      const newBuffers = updateArray(buffers, operator)
+      newState = { wait: 'NUMBER', number: newnum, buffers: newBuffers }
+    }
 
-    setState(nextState)
+    setState(newState)
   },
   operator(operator) {
     const { buffers, number, wait } = getState()
 
-    const matchWaitState = createMatch({
-      NUMBER({ buffers, number, operator }) {
-        // 결과값이 있는 경우 출력 아니면 과거값 그대로 표시 구현 필요
-        const newBuffers = updateArray(buffers, number)
-        const wait = 'OPERATOR'
-        return { buffers: newBuffers, wait, operator }
-      },
-      OPERATOR({ operator }) {
-        return { operator }
-      },
-    })
+    let newState = {}
+    if (wait === 'NUMBER') {
+      // 결과값이 있는 경우 출력 아니면 과거값 그대로 표시
+      const newBuffers = updateArray(buffers, number)
+      const wait = 'OPERATOR'
+      newState = { buffers: newBuffers, wait, operator }
+    } else if (wait === 'OPERATOR') {
+      newState = { operator }
+    }
 
-    const nextState = matchWaitState(wait, { buffers, number, operator })
-    setState(nextState)
+    setState(newState)
   },
   c() {
     setState({ number: 0, wait: 'NUMBER', buffers: [] })
