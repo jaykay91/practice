@@ -61,8 +61,16 @@ const eraseLastNumber = number => {
   return parseInt(slstr)
 }
 
+const canCalculate = (buffers) => {
+  if (buffers.length < 3) return false
+  const last = buffers.length - 1
+  if (typeof buffers[last] === 'string') throw new Error('Invalid Buffers')
+  return true
+}
 
+const calculate = () => {
 
+}
 
 const onClickButton = {
   number(newnum) {
@@ -72,6 +80,7 @@ const onClickButton = {
     if (wait === 'NUMBER') {
       const connum = concatNumber(number, newnum)
       newState = { number: connum }
+      
     } else if (wait === 'OPERATOR') {  
       const newBuffers = updateArray(buffers, operator)
       newState = { wait: 'NUMBER', number: newnum, buffers: newBuffers }
@@ -85,9 +94,11 @@ const onClickButton = {
     let newState = {}
     if (wait === 'NUMBER') {
       // 결과값이 있는 경우 출력 아니면 과거값 그대로 표시
+
       const newBuffers = updateArray(buffers, number)
       const wait = 'OPERATOR'
       newState = { buffers: newBuffers, wait, operator }
+
     } else if (wait === 'OPERATOR') {
       newState = { operator }
     }
