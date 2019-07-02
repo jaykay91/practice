@@ -2,6 +2,7 @@ const operationBtns = document.querySelectorAll('.js-oper-btn')
 const numberBtns = document.querySelectorAll('.js-num-btn')
 const backBtn = document.querySelector('.js-back-btn')
 const cBtn = document.querySelector('.js-c-btn')
+const equalBtn = document.querySelector('.js-equal-btn')
 
 const createRender = ({ selector, stateName, renderData }) => {
   const element = document.querySelector(selector)
@@ -39,7 +40,7 @@ let state = {
   number: 0,
   calculated: 0,
   operator: null,
-  wait: 'NUMBER',
+  wait: 'RESET',
 }
 
 const setState = newState => state = Object.assign({}, state, newState)
@@ -93,6 +94,11 @@ const onClickButton = {
     } else if (wait === 'OPERATOR') {  
       const newBuffers = updateArray(buffers, operator)
       newState = { wait: 'NUMBER', number: newnum, buffers: newBuffers }
+    } else if (wait === 'RESET') {
+      newState = {
+        wait: 'NUMBER',
+        number: newnum,
+      }
     }
 
     setState(newState)
@@ -102,7 +108,7 @@ const onClickButton = {
 
     let newState = {}
 
-    if (wait === 'NUMBER') {
+    if (wait === 'NUMBER' || wait === 'RESET') {
       const newCalculated = calculate(calculated, operator, number)
       const newBuffers = updateArray(buffers, number)
       const newWait = 'OPERATOR'
@@ -123,19 +129,36 @@ const onClickButton = {
   },
   c() {
     setState({ 
-      number: 0, 
-      wait: 'NUMBER', 
-      buffers: [],
       calculated: 0,
+      operator: null,
+      number: 0, 
+      wait: 'RESET', 
+      buffers: [],
      })
   },
   back() {
     const { number, wait } = getState()
 
     if (wait === 'OPERATOR') return
+    if (wait === 'RESET') return
 
     const eranum = eraseLastNumber(number)
     setState({ number: eranum })
+  },
+  equal() {
+    const { calculated, operator, number } = getState()
+
+    // 계산 결과 출력하면서 
+    // 초기화 하기
+    const newCalculated = calculate(calculated, operator, number)
+    
+    setState({ 
+      calculated: 0,
+      operator: null,
+      number: newCalculated, 
+      wait: 'RESET', 
+      buffers: [],
+    })
   },
 }
 
@@ -162,6 +185,10 @@ backBtn.addEventListener('click', e => {
 })
 cBtn.addEventListener('click', e => {
   onClickButton.c()
+  render(state)
+})
+equalBtn.addEventListener('click', e => {
+  onClickButton.equal()
   render(state)
 })
 
