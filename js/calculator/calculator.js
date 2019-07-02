@@ -61,15 +61,24 @@ const eraseLastNumber = number => {
   return parseInt(slstr)
 }
 
-const canCalculate = (buffers) => {
-  if (buffers.length < 3) return false
-  const last = buffers.length - 1
-  if (typeof buffers[last] === 'string') throw new Error('Invalid Buffers')
-  return true
-}
+// const canCalculate = (buffers) => {
+//   if (buffers.length < 3) return false
+//   const last = buffers.length - 1
+//   if (typeof buffers[last] === 'string') return false
+//   return true
+// }
 
-const calculate = () => {
+const calculate = (oldnum, op, newnum) => {
+  if (!op) return newnum
+   
+  const operations = {
+    ['+'](a, b) { return a + b },
+    ['-'](a, b) { return a - b },
+    ['*'](a, b) { return a*b },
+    ['/'](a, b) { return a/b },
+  }
 
+  return operations[op](oldnum, newnum)
 }
 
 const onClickButton = {
@@ -88,25 +97,37 @@ const onClickButton = {
 
     setState(newState)
   },
-  operator(operator) {
-    const { buffers, number, wait } = getState()
+  operator(newOperator) {
+    const { buffers, number, wait, calculated, operator } = getState()
 
     let newState = {}
-    if (wait === 'NUMBER') {
-      // 결과값이 있는 경우 출력 아니면 과거값 그대로 표시
 
+    if (wait === 'NUMBER') {
+      const newCalculated = calculate(calculated, operator, number)
       const newBuffers = updateArray(buffers, number)
-      const wait = 'OPERATOR'
-      newState = { buffers: newBuffers, wait, operator }
+      const newWait = 'OPERATOR'
+      
+      newState = { 
+        buffers: newBuffers, 
+        wait: newWait, 
+        calculated: newCalculated,
+        number: newCalculated,
+        operator: newOperator, 
+      }
 
     } else if (wait === 'OPERATOR') {
-      newState = { operator }
+      newState = { operator: newOperator }
     }
 
     setState(newState)
   },
   c() {
-    setState({ number: 0, wait: 'NUMBER', buffers: [] })
+    setState({ 
+      number: 0, 
+      wait: 'NUMBER', 
+      buffers: [],
+      calculated: 0,
+     })
   },
   back() {
     const { number, wait } = getState()
@@ -124,6 +145,7 @@ const onClickButton = {
 operationBtns.forEach(el => el.addEventListener('click', e => {
   const op = e.target.textContent
   onClickButton.operator(op)
+  render(state)
   console.log(state)
 }))
 
