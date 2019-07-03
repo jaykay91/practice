@@ -1,16 +1,30 @@
-const operationBtns = document.querySelectorAll('.js-oper-btn')
-const numberBtns = document.querySelectorAll('.js-num-btn')
-const backBtn = document.querySelector('.js-back-btn')
-const cBtn = document.querySelector('.js-c-btn')
-const equalBtn = document.querySelector('.js-equal-btn')
+const operationBtns = document.querySelectorAll('.js-oper-btn');
+const numberBtns = document.querySelectorAll('.js-num-btn');
+const backBtn = document.querySelector('.js-back-btn');
+const cBtn = document.querySelector('.js-c-btn');
+const equalBtn = document.querySelector('.js-equal-btn');
 
-const createRender = ({ selector, stateName, renderData }) => {
-  const element = document.querySelector(selector)
-  const mapper = { [stateName]: element }
-  
+let state = {
+  buffers: [],
+  number: 0,
+  calculated: 0,
+  operator: null,
+  wait: 'RESET',
+};
+
+const setState = newState => state = Object.assign({}, state, newState)
+const getState = () => state
+
+const createRender = selectorMap => {
+  const domMap = selectorMap.map(([selector, render]) => {
+    const dom = document.querySelector(selector);
+    return [dom, render];
+  });
+
   return state => {
-    const val = renderData(state[stateName])
-    mapper[stateName].textContent = val
+    domMap.forEach(([dom, render]) => {
+      dom.textContent = render(state);
+    });
   }
 }
 
@@ -27,24 +41,18 @@ const makeNumberUsingComma = num => {
   return strbuf
 }
 
-const render = createRender({ 
-  selector: '.js-screen', 
-  stateName: 'number', 
-  renderData(val) {
-    return makeNumberUsingComma(val)
-  }
-})
-
-let state = {
-  buffers: [],
-  number: 0,
-  calculated: 0,
-  operator: null,
-  wait: 'RESET',
-}
-
-const setState = newState => state = Object.assign({}, state, newState)
-const getState = () => state
+const render = createRender([
+  [
+    '.js-screen',
+    ({ number }) => {
+      return makeNumberUsingComma(number);
+    },
+  ],
+  [
+    '.js-subscreen',
+    ({ buffers }) => buffers.reduce((prev, curr) => `${prev} ${curr}`, ''),
+  ],
+]);
 
 render(state);
 
@@ -158,22 +166,59 @@ const onClickButton = {
       number: newCalculated, 
       wait: 'RESET', 
       buffers: [],
-    })
+    });
   },
 }
 
 
+document.addEventListener('keyup', e => {
+  const key = e.key;
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const operations = ['+', '-', '*', '/'];
+  const equal = '=';
+  const backspace = 'Backspace';
+  const esc = 'Escape';
 
+  if (numbers.includes(key)) {
+    onClickButton.number(+key);
+    render(state);
+    return;
+  }
+
+  if (operations.includes(key)) {
+    onClickButton.operator(key);
+    render(state);
+    return;
+  }
+
+  if (key === equal) {
+    onClickButton.equal();
+    render(state);
+    return;
+  }
+
+  if (key === backspace) {
+    onClickButton.back();
+    render(state);
+    return;
+  }
+
+  if (key === esc) {
+    onClickButton.c();
+    render(state);
+    return;
+  }
+});
 
 operationBtns.forEach(el => el.addEventListener('click', e => {
-  console.log(state)
+  // console.log(state)
   const op = e.target.textContent
   onClickButton.operator(op)
   render(state)
 }))
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
-  console.log(state)
+  // console.log(state)
   const number = e.target.textContent
   onClickButton.number(parseInt(number))
   render(state)
@@ -196,7 +241,5 @@ equalBtn.addEventListener('click', e => {
   할 일 목록
     소수점 연산 추가
     소수점 버튼 구현
-    계산 목록 디스플레이 추가
-    키보드 입력 추가
-
+    리팩토링
 */
