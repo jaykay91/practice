@@ -62,13 +62,6 @@ const eraseLastNumber = number => {
   return parseInt(slstr)
 }
 
-// const canCalculate = (buffers) => {
-//   if (buffers.length < 3) return false
-//   const last = buffers.length - 1
-//   if (typeof buffers[last] === 'string') return false
-//   return true
-// }
-
 const calculate = (oldnum, op, newnum) => {
   if (!op) return newnum
    
@@ -87,6 +80,7 @@ const onClickButton = {
     const { number, wait, operator, buffers } = getState()
 
     let newState = {};
+
     if (wait === 'NUMBER') {
       const connum = concatNumber(number, newnum)
       newState = { number: connum }
@@ -94,6 +88,7 @@ const onClickButton = {
     } else if (wait === 'OPERATOR') {  
       const newBuffers = updateArray(buffers, operator)
       newState = { wait: 'NUMBER', number: newnum, buffers: newBuffers }
+
     } else if (wait === 'RESET') {
       newState = {
         wait: 'NUMBER',
@@ -146,11 +141,16 @@ const onClickButton = {
     setState({ number: eranum })
   },
   equal() {
-    const { calculated, operator, number } = getState()
+    const { calculated, operator, number, wait } = getState()
 
-    // 계산 결과 출력하면서 
-    // 초기화 하기
-    const newCalculated = calculate(calculated, operator, number)
+    let newCalculated;
+    
+    if (wait === 'OPERATOR') {
+      newCalculated = calculated;      
+
+    } else {
+      newCalculated = calculate(calculated, operator, number);
+    }
     
     setState({ 
       calculated: 0,
@@ -166,17 +166,17 @@ const onClickButton = {
 
 
 operationBtns.forEach(el => el.addEventListener('click', e => {
+  console.log(state)
   const op = e.target.textContent
   onClickButton.operator(op)
   render(state)
-  console.log(state)
 }))
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
+  console.log(state)
   const number = e.target.textContent
   onClickButton.number(parseInt(number))
   render(state)
-  console.log(state)
 
 }))
 backBtn.addEventListener('click', e => {
@@ -194,12 +194,9 @@ equalBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    1. 연산 기능 추가
-  
-  공부 목록
-    0. 축약 패턴
-    1. 위임 패턴
-    2. dataset 속성
-    3. 버블링, 이벤트 전파
-    4. 정규표현식으로 바꾸기
+    소수점 연산 추가
+    소수점 버튼 구현
+    계산 목록 디스플레이 추가
+    키보드 입력 추가
+
 */
