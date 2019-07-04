@@ -3,6 +3,8 @@ const numberBtns = document.querySelectorAll('.js-num-btn');
 const backBtn = document.querySelector('.js-back-btn');
 const cBtn = document.querySelector('.js-c-btn');
 const equalBtn = document.querySelector('.js-equal-btn');
+const ceBtn = document.querySelector('.js-ce-btn');
+const dotBtn = document.querySelector('.js-dot-btn');
 
 let state = {
   buffers: [],
@@ -140,18 +142,18 @@ const onClickButton = {
      })
   },
   back() {
-    const { number, wait } = getState()
+    const { number, wait } = getState();
 
-    if (wait === 'OPERATOR') return
-    if (wait === 'RESET') return
+    if (wait === 'OPERATOR') return;
+    if (wait === 'RESET') return;
 
-    const eranum = eraseLastNumber(number)
-    setState({ number: eranum })
+    const eranum = eraseLastNumber(number);
+    setState({ number: eranum });
   },
   equal() {
-    const { calculated, operator, number, wait } = getState()
+    const { calculated, operator, number, wait } = getState();
 
-    let newCalculated;
+    let newCalculated = {};
     
     if (wait === 'OPERATOR') {
       newCalculated = calculated;      
@@ -168,6 +170,25 @@ const onClickButton = {
       buffers: [],
     });
   },
+  ce() {
+    const { wait, operator, buffers } = getState();
+
+    const nextBuffers = (buffers, operator) => {
+      if (wait !== 'OPERATOR') return buffers;
+      return updateArray(buffers, operator);
+    }
+
+    const newBuffers = nextBuffers(buffers, operator);
+
+    setState({
+      wait: 'NUMBER',
+      number: 0,
+      buffers: newBuffers,
+    });
+  },
+  dot() {
+
+  }, 
 }
 
 
@@ -175,8 +196,6 @@ document.addEventListener('keyup', e => {
   const key = e.key;
   const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   const operations = ['+', '-', '*', '/'];
-  const equal = '=';
-  const backspace = 'Backspace';
   const esc = 'Escape';
 
   if (numbers.includes(key)) {
@@ -191,13 +210,13 @@ document.addEventListener('keyup', e => {
     return;
   }
 
-  if (key === equal) {
+  if (key === '=' || key === 'Enter') {
     onClickButton.equal();
     render(state);
     return;
   }
 
-  if (key === backspace) {
+  if (key === 'Backspace') {
     onClickButton.back();
     render(state);
     return;
@@ -215,7 +234,7 @@ operationBtns.forEach(el => el.addEventListener('click', e => {
   const op = e.target.textContent
   onClickButton.operator(op)
   render(state)
-}))
+}));
 
 numberBtns.forEach(el => el.addEventListener('click', e => {
   // console.log(state)
@@ -223,23 +242,38 @@ numberBtns.forEach(el => el.addEventListener('click', e => {
   onClickButton.number(parseInt(number))
   render(state)
 
-}))
+}));
+
 backBtn.addEventListener('click', e => {
   onClickButton.back()
   render(state)
-})
+});
+
 cBtn.addEventListener('click', e => {
   onClickButton.c()
   render(state)
-})
+});
+
 equalBtn.addEventListener('click', e => {
   onClickButton.equal()
   render(state)
-})
+});
+
+dotBtn.addEventListener('click', e => {
+  // 소수점 연산
+  
+});
+
+ceBtn.addEventListener('click', e => {
+  onClickButton.ce();
+  render(state);
+});
+
+
 
 /*
   할 일 목록
-    소수점 연산 추가
     소수점 버튼 구현
+    소수점 연산 추가
     리팩토링
 */
