@@ -9,7 +9,7 @@ const dotBtn = document.querySelector('.js-dot-btn')
 let state = {
   buffers: [],
   number: '0',
-  calculated: 0,
+  calculated: '0',
   operator: null,
   wait: 'RESET',
 }
@@ -31,10 +31,18 @@ const createRender = selectorMap => {
 }
 
 const makeNumberUsingComma = number => {
+  const splitDot = numstr => {
+    const dotIndex = number.indexOf('.')
+
+    if (dotIndex === -1) return [numstr, '']
+    
+    const strnum = numstr.slice(0, dotIndex)
+    const dotstr = numstr.slice(dotIndex)    
+
+    return [strnum, dotstr]
+  } 
   
-  const [strnum, dotnum] = number.split('.')
-  
-  // dotnum 값 확인해서 있으면 합치고 아니면 말기
+  const [strnum, dotstr] = splitDot(number)
   
   const arr = strnum.split('')
   let strbuf = arr.splice(-3).join('')
@@ -44,7 +52,7 @@ const makeNumberUsingComma = number => {
     strbuf = `${slarr.join('')},${strbuf}`
   }
 
-  return strbuf
+  return strbuf + dotstr
 }
 
 const render = createRender([
@@ -64,9 +72,15 @@ render(state)
 
 const updateArray = (oldarr, ...args) => [...oldarr, ...args]
 
-const concatNumber = (oldnum, newnum) => {
-  if (`${oldnum}` === '0') return `${newnum}`
-  return `${oldnum}${newnum}`
+const concatNumber = (oldnum, newstr) => {
+  if (newstr === '.') {
+    const hasDot = oldnum.includes('.')
+    return hasDot ? oldnum : `${oldnum}.`
+  }
+
+  if (`${oldnum}` === '0') return `${newstr}`
+
+  return `${oldnum}${newstr}`
 }
 
 const eraseLastNumber = number => {
@@ -142,7 +156,7 @@ const onClickButton = {
   },
   c() {
     setState({ 
-      calculated: 0,
+      calculated: '0',
       operator: null,
       number: '0', 
       wait: 'RESET', 
@@ -171,7 +185,7 @@ const onClickButton = {
     }
     
     setState({ 
-      calculated: 0,
+      calculated: '0',
       operator: null,
       number: newCalculated, 
       wait: 'RESET', 
@@ -195,12 +209,15 @@ const onClickButton = {
     })
   },
   dot() {
-
+    const { number } = getState()
+    const newNumber = concatNumber(number, '.')
+    
+    setState({ number: newNumber, wait: 'NUMBER' })
   }, 
 }
 
 
-document.addEventListener('keyup', e => {
+document.addEventListener('keydown', e => {
   console.log(state)
   
   const key = e.key
@@ -237,6 +254,12 @@ document.addEventListener('keyup', e => {
     render(state)
     return
   }
+
+  if (key === '.') {
+    onClickButton.dot()
+    render(state)
+    return
+  }
 })
 
 operationBtns.forEach(el => el.addEventListener('click', e => {
@@ -269,17 +292,8 @@ equalBtn.addEventListener('click', e => {
 })
 
 dotBtn.addEventListener('click', e => {
-  // 콤마 만들떄 점 있으면 점 없는 부분만 콤마 만들게 하기
-  //   usingComma 함수에서 점 앞에 부분만 만들고 나중에 합치기
-
-  // 소수점 추가 할때 두번 추가 안하고 한번만 추가하게 하기
-  // 점있는 상태에서의 숫자 입력
-
-
-  // 연산할때 문자열 숫자로 바꾸기
-  // 연산할때 점 처리하기
-
-
+  onClickButton.dot()
+  render(state)
 })
 
 ceBtn.addEventListener('click', e => {
@@ -291,7 +305,7 @@ ceBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    소수점 연산 추가
+    소수점 연산 오류 수정
     숫자 길이 제한
     메모리 길이 제한
     리팩토링
