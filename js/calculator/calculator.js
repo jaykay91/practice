@@ -70,7 +70,13 @@ const render = createRender([
 
 render(state)
 
-const updateArray = (oldarr, ...args) => [...oldarr, ...args]
+const updateArray = (oldarr, input) => {
+  const dotIndex = input.indexOf('.')
+  if (dotIndex === -1) return [...oldarr, input]
+  if (dotIndex !== input.length - 1) return [...oldarr, input]
+
+  return [...oldarr, input.slice(0, dotIndex)]
+}
 
 const concatNumber = (oldnum, newstr) => {
   if (newstr === '.') {
@@ -209,10 +215,30 @@ const onClickButton = {
     })
   },
   dot() {
-    const { number } = getState()
-    const newNumber = concatNumber(number, '.')
+
+
     
-    setState({ number: newNumber, wait: 'NUMBER' })
+    const { number, wait } = getState()
+    
+    let state;
+    //  상태를 확인
+    if (wait === 'NUMBER') {
+      //      숫자와 점을 합친 새로운 number로 변경
+      state = { number: concatNumber(number, '.') }
+    } else if (wait === 'RESET') {
+      state = { 
+        number: concatNumber('0', '.'),
+        wait: 'NUMBER',
+      }
+    } else if (wait === 'OPERATOR') {
+      //    OPERATOR이면
+      //      아무것도 하지 않음
+    }
+
+
+
+    
+    setState(state)
   }, 
 }
 
@@ -306,6 +332,7 @@ ceBtn.addEventListener('click', e => {
 /*
   할 일 목록
     소수점 연산 오류 수정
+    마이너스 추가되는 문제 수정
     숫자 길이 제한
     메모리 길이 제한
     리팩토링
