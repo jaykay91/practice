@@ -31,6 +31,8 @@ const createRender = selectorMap => {
 }
 
 const makeNumberUsingComma = number => {
+  if (number === 'Infinity') return '0으로 나눌 수 없습니다.'
+  
   const splitDot = numstr => {
     const dotIndex = number.indexOf('.')
 
