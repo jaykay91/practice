@@ -102,7 +102,7 @@ const calculate = (oldstr, op, newstr) => {
   const oldnum = parseFloat(oldstr)
   const newnum = parseFloat(newstr)
 
-  if (!op) return newstr
+  if (!op) return newstr.replace('.', '')
    
   const operations = {
     ['+'](a, b) { return a + b },
