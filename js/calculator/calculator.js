@@ -88,6 +88,8 @@ const updateArray = (oldarr, input) => {
 }
 
 const concatNumber = (oldnum, newstr) => {
+  if (oldnum.length > 9) return oldnum
+  
   if (newstr === '.') {
     const hasDot = oldnum.includes('.')
     return hasDot ? oldnum : `${oldnum}.`
@@ -329,8 +331,6 @@ ceBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    마이너스 추가되는 문제 수정
-    숫자 길이 제한
     소수, 큰 숫자 계산 오류 수정
     리팩토링
 */
