@@ -30,8 +30,15 @@ const createRender = selectorMap => {
   }
 }
 
-const makeNumberUsingComma = number => {
-  if (number === 'Infinity') return '0으로 나눌 수 없습니다.'
+const makeNumberUsingComma = str => {
+  if (str.includes('Infinity')) return '0으로 나눌 수 없습니다.'
+  
+  const splitMinus = numstr => {
+    if (numstr[0] !== '-') return ['', numstr] 
+    return ['-', numstr.slice(1)]
+  }
+
+  const [minus, number] = splitMinus(str)
   
   const splitDot = numstr => {
     const dotIndex = number.indexOf('.')
@@ -54,7 +61,7 @@ const makeNumberUsingComma = number => {
     strbuf = `${slarr.join('')},${strbuf}`
   }
 
-  return strbuf + dotstr
+  return minus + strbuf + dotstr
 }
 
 const render = createRender([
@@ -217,28 +224,17 @@ const onClickButton = {
     })
   },
   dot() {
-
-
-    
     const { number, wait } = getState()
     
     let state;
-    //  상태를 확인
     if (wait === 'NUMBER') {
-      //      숫자와 점을 합친 새로운 number로 변경
       state = { number: concatNumber(number, '.') }
     } else if (wait === 'RESET') {
       state = { 
         number: concatNumber('0', '.'),
         wait: 'NUMBER',
       }
-    } else if (wait === 'OPERATOR') {
-      //    OPERATOR이면
-      //      아무것도 하지 않음
     }
-
-
-
     
     setState(state)
   }, 
@@ -333,9 +329,8 @@ ceBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    소수점 연산 오류 수정
     마이너스 추가되는 문제 수정
     숫자 길이 제한
-    메모리 길이 제한
+    소수, 큰 숫자 계산 오류 수정
     리팩토링
 */
