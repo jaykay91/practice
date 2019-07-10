@@ -107,11 +107,21 @@ const eraseLastNumber = number => {
   return slstr
 }
 
+const eraseDot = numstr => {
+  const dotidx = numstr.lastIndexOf('.')
+  if (dotidx === -1) return numstr
+  const lastidx = numstr.length - 1
+  if (dotidx !== lastidx) return numstr
+  return numstr.slice(0, lastidx)
+}
+
 const calculate = (oldstr, op, newstr) => {
+  console.log(oldstr, op, newstr)
+  
   const oldnum = parseFloat(oldstr)
   const newnum = parseFloat(newstr)
 
-  if (!op) return newstr.replace('.', '')
+  if (!op) return eraseDot(newstr)
    
   const operations = {
     ['+'](a, b) { return a + b },
@@ -331,6 +341,6 @@ ceBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    소수, 큰 숫자 계산 오류 수정
+    소수점 처리, e문자 처리
     리팩토링
 */
