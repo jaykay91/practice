@@ -31,7 +31,9 @@ const createRender = selectorMap => {
 }
 
 const makeNumberUsingComma = str => {
-  if (str.includes('Infinity')) return '0으로 나눌 수 없습니다.'
+  if (str.includes('Infinity') || str.includes('NaN')) {
+    return '0으로 나눌 수 없습니다.'
+  }
   
   const splitMinus = numstr => {
     if (numstr[0] !== '-') return ['', numstr] 
@@ -116,8 +118,6 @@ const eraseDot = numstr => {
 }
 
 const calculate = (oldstr, op, newstr) => {
-  console.log(oldstr, op, newstr)
-  
   const oldnum = parseFloat(oldstr)
   const newnum = parseFloat(newstr)
 
@@ -131,7 +131,9 @@ const calculate = (oldstr, op, newstr) => {
   }
 
   const calculated = operations[op](oldnum, newnum)
-  return `${calculated}`
+  const fixed = parseFloat(calculated.toFixed(10))
+
+  return `${fixed}`
 }
 
 const onClickButton = {
@@ -341,6 +343,5 @@ ceBtn.addEventListener('click', e => {
 
 /*
   할 일 목록
-    소수점 처리, e문자 처리
     리팩토링
 */
