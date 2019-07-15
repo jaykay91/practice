@@ -11,7 +11,7 @@ let state = {
   number: '0',
   calculated: '0',
   operator: null,
-  wait: 'RESET',
+  WAIT_STATUS: 'RESET',
 }
 
 const setState = newState => state = Object.assign({}, state, newState)
@@ -138,21 +138,21 @@ const calculate = (oldstr, op, newstr) => {
 
 const onClickButton = {
   number(newnum) {
-    const { number, wait, operator, buffers } = getState()
+    const { number, WAIT_STATUS, operator, buffers } = getState()
 
     let newState = {}
 
-    if (wait === 'NUMBER') {
+    if (WAIT_STATUS === 'NUMBER') {
       const connum = concatNumber(number, newnum)
       newState = { number: connum }
       
-    } else if (wait === 'OPERATOR') {  
+    } else if (WAIT_STATUS === 'OPERATOR') {  
       const newBuffers = updateArray(buffers, operator)
-      newState = { wait: 'NUMBER', number: newnum, buffers: newBuffers }
+      newState = { WAIT_STATUS: 'NUMBER', number: newnum, buffers: newBuffers }
 
-    } else if (wait === 'RESET') {
+    } else if (WAIT_STATUS === 'RESET') {
       newState = {
-        wait: 'NUMBER',
+        WAIT_STATUS: 'NUMBER',
         number: newnum,
       }
     }
@@ -160,24 +160,24 @@ const onClickButton = {
     setState(newState)
   },
   operator(newOperator) {
-    const { buffers, number, wait, calculated, operator } = getState()
+    const { buffers, number, WAIT_STATUS, calculated, operator } = getState()
 
     let newState = {}
 
-    if (wait === 'NUMBER' || wait === 'RESET') {
+    if (WAIT_STATUS === 'NUMBER' || WAIT_STATUS === 'RESET') {
       const newCalculated = calculate(calculated, operator, number)
       const newBuffers = updateArray(buffers, number)
       const newWait = 'OPERATOR'
       
       newState = { 
         buffers: newBuffers, 
-        wait: newWait, 
+        WAIT_STATUS: newWait, 
         calculated: newCalculated,
         number: newCalculated,
         operator: newOperator, 
       }
 
-    } else if (wait === 'OPERATOR') {
+    } else if (WAIT_STATUS === 'OPERATOR') {
       newState = { operator: newOperator }
     }
 
@@ -188,25 +188,25 @@ const onClickButton = {
       calculated: '0',
       operator: null,
       number: '0', 
-      wait: 'RESET', 
+      WAIT_STATUS: 'RESET', 
       buffers: [],
      })
   },
   back() {
-    const { number, wait } = getState()
+    const { number, WAIT_STATUS } = getState()
 
-    if (wait === 'OPERATOR') return
-    if (wait === 'RESET') return
+    if (WAIT_STATUS === 'OPERATOR') return
+    if (WAIT_STATUS === 'RESET') return
 
     const eranum = eraseLastNumber(number)
     setState({ number: eranum })
   },
   equal() {
-    const { calculated, operator, number, wait } = getState()
+    const { calculated, operator, number, WAIT_STATUS } = getState()
 
     let newCalculated = {}
     
-    if (wait === 'OPERATOR') {
+    if (WAIT_STATUS === 'OPERATOR') {
       newCalculated = calculated      
 
     } else {
@@ -217,36 +217,36 @@ const onClickButton = {
       calculated: '0',
       operator: null,
       number: newCalculated, 
-      wait: 'RESET', 
+      WAIT_STATUS: 'RESET', 
       buffers: [],
     })
   },
   ce() {
-    const { wait, operator, buffers } = getState()
+    const { WAIT_STATUS, operator, buffers } = getState()
 
     const nextBuffers = (buffers, operator) => {
-      if (wait !== 'OPERATOR') return buffers
+      if (WAIT_STATUS !== 'OPERATOR') return buffers
       return updateArray(buffers, operator)
     }
 
     const newBuffers = nextBuffers(buffers, operator)
 
     setState({
-      wait: 'NUMBER',
+      WAIT_STATUS: 'NUMBER',
       number: '0',
       buffers: newBuffers,
     })
   },
   dot() {
-    const { number, wait } = getState()
+    const { number, WAIT_STATUS } = getState()
     
     let state;
-    if (wait === 'NUMBER') {
+    if (WAIT_STATUS === 'NUMBER') {
       state = { number: concatNumber(number, '.') }
-    } else if (wait === 'RESET') {
+    } else if (WAIT_STATUS === 'RESET') {
       state = { 
         number: concatNumber('0', '.'),
-        wait: 'NUMBER',
+        WAIT_STATUS: 'NUMBER',
       }
     }
     
