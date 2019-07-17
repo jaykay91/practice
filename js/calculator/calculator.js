@@ -1,10 +1,12 @@
-const operationBtns = document.querySelectorAll('.js-oper-btn')
-const numberBtns = document.querySelectorAll('.js-num-btn')
-const backBtn = document.querySelector('.js-back-btn')
-const cBtn = document.querySelector('.js-c-btn')
-const equalBtn = document.querySelector('.js-equal-btn')
-const ceBtn = document.querySelector('.js-ce-btn')
-const dotBtn = document.querySelector('.js-dot-btn')
+// const operationBtns = document.querySelectorAll('.js-oper-btn')
+// const numberBtns = document.querySelectorAll('.js-num-btn')
+// const backBtn = document.querySelector('.js-back-btn')
+// const cBtn = document.querySelector('.js-c-btn')
+// const equalBtn = document.querySelector('.js-equal-btn')
+// const ceBtn = document.querySelector('.js-ce-btn')
+// const dotBtn = document.querySelector('.js-dot-btn')
+
+const calculator = document.querySelector('#calculator')
 
 let state = {
   buffers: [],
@@ -339,6 +341,14 @@ ceBtn.addEventListener('click', e => {
   render(state)
 })
 
+
+caclculator.addEventListener('click', ev => {
+
+})
+
+calculator.addEventListener('keydown', ev => {
+
+})
 
 
 /*
