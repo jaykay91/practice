@@ -302,53 +302,86 @@ document.addEventListener('keydown', e => {
   }
 })
 
-operationBtns.forEach(el => el.addEventListener('click', e => {
-  console.log(state)
-  const op = e.target.textContent
-  onClickButton.operator(op)
-  render(state)
-}))
+// operationBtns.forEach(el => el.addEventListener('click', e => {
+//   console.log(state)
+//   const op = e.target.textContent
+//   onClickButton.operator(op)
+//   render(state)
+// }))
 
-numberBtns.forEach(el => el.addEventListener('click', e => {
-  console.log(state)
-  const number = e.target.textContent
-  onClickButton.number(number)
-  render(state)
-}))
+// numberBtns.forEach(el => el.addEventListener('click', e => {
+//   console.log(state)
+//   const number = e.target.textContent
+//   onClickButton.number(number)
+//   render(state)
+// }))
 
-backBtn.addEventListener('click', e => {
-  onClickButton.back()
-  render(state)
+// backBtn.addEventListener('click', e => {
+//   onClickButton.back()
+//   render(state)
+// })
+
+// cBtn.addEventListener('click', e => {
+//   onClickButton.c()
+//   render(state)
+// })
+
+// equalBtn.addEventListener('click', e => {
+//   onClickButton.equal()
+//   render(state)
+// })
+
+// dotBtn.addEventListener('click', e => {
+//   onClickButton.dot()
+//   render(state)
+// })
+
+// ceBtn.addEventListener('click', e => {
+//   onClickButton.ce()
+//   render(state)
+// })
+
+const hookMap = {
+  INPUT_OPERATION() {
+    
+  },
+  INPUT_NUMBER() {
+
+  },
+  INPUT_EQUAL() {
+
+  },
+  INPUT_BACKSPACE() {
+
+  },
+  INPUT_CLEAR() {
+    
+  },
+  INPUT_CLEAR_ENTRY() {
+
+  },
+  INPUT_DOT() {
+
+  },
+}
+
+const getNextState = (state, input) => {
+  
+}
+
+calculator.addEventListener('click', ({ target }) => {
+  const hook = target.dataset.hook
+  if (!hook) return
+  const input = target.dataset.input
+  const getNextState = hookMap[hook]
+  const prev = getState()
+  const next = getNextState(prev, input)
+  setState(next)
 })
 
-cBtn.addEventListener('click', e => {
-  onClickButton.c()
-  render(state)
-})
+// calculator.addEventListener('keydown', ev => {
 
-equalBtn.addEventListener('click', e => {
-  onClickButton.equal()
-  render(state)
-})
-
-dotBtn.addEventListener('click', e => {
-  onClickButton.dot()
-  render(state)
-})
-
-ceBtn.addEventListener('click', e => {
-  onClickButton.ce()
-  render(state)
-})
-
-
-caclculator.addEventListener('click', ev => {
-
-})
-
-calculator.addEventListener('keydown', ev => {
-
-})
+// })
 
 
 /*
