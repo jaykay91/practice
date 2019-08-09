@@ -8,17 +8,6 @@
 
 const calculator = document.querySelector('#calculator')
 
-let state = {
-  buffers: [],
-  number: '0',
-  calculated: '0',
-  operator: null,
-  WAIT_STATUS: 'RESET',
-}
-
-const setState = newState => state = Object.assign({}, state, newState)
-const getState = () => state
-
 const createRender = selectorMap => {
   const domMap = selectorMap.map(([selector, render]) => {
     const dom = document.querySelector(selector)
@@ -81,6 +70,21 @@ const render = createRender([
   ],
 ])
 
+let state = {
+  buffers: [],
+  number: '0',
+  calculated: '0',
+  operator: null,
+  WAIT_STATUS: 'RESET',
+}
+
+const setState = newState => {
+  state = Object.assign({}, state, newState)
+  render(state)
+}
+
+const getState = () => state
+
 render(state)
 
 const updateArray = (oldarr, input) => {
@@ -140,119 +144,119 @@ const calculate = (oldstr, op, newstr) => {
 
 const onClickButton = {
   number(newnum) {
-    const { number, WAIT_STATUS, operator, buffers } = getState()
+    // const { number, WAIT_STATUS, operator, buffers } = getState()
 
-    let newState = {}
+    // let newState = {}
 
-    if (WAIT_STATUS === 'NUMBER') {
-      const connum = concatNumber(number, newnum)
-      newState = { number: connum }
+    // if (WAIT_STATUS === 'NUMBER') {
+    //   const connum = concatNumber(number, newnum)
+    //   newState = { number: connum }
       
-    } else if (WAIT_STATUS === 'OPERATOR') {  
-      const newBuffers = updateArray(buffers, operator)
-      newState = { WAIT_STATUS: 'NUMBER', number: newnum, buffers: newBuffers }
+    // } else if (WAIT_STATUS === 'OPERATOR') {  
+    //   const newBuffers = updateArray(buffers, operator)
+    //   newState = { WAIT_STATUS: 'NUMBER', number: newnum, buffers: newBuffers }
 
-    } else if (WAIT_STATUS === 'RESET') {
-      newState = {
-        WAIT_STATUS: 'NUMBER',
-        number: newnum,
-      }
-    }
+    // } else if (WAIT_STATUS === 'RESET') {
+    //   newState = {
+    //     WAIT_STATUS: 'NUMBER',
+    //     number: newnum,
+    //   }
+    // }
 
-    setState(newState)
+    // setState(newState)
   },
   operator(newOperator) {
-    const { buffers, number, WAIT_STATUS, calculated, operator } = getState()
+    // const { buffers, number, WAIT_STATUS, calculated, operator } = getState()
 
-    let newState = {}
+    // let newState = {}
 
-    if (WAIT_STATUS === 'NUMBER' || WAIT_STATUS === 'RESET') {
-      const newCalculated = calculate(calculated, operator, number)
-      const newBuffers = updateArray(buffers, number)
-      const newWait = 'OPERATOR'
+    // if (WAIT_STATUS === 'NUMBER' || WAIT_STATUS === 'RESET') {
+    //   const newCalculated = calculate(calculated, operator, number)
+    //   const newBuffers = updateArray(buffers, number)
+    //   const newWait = 'OPERATOR'
       
-      newState = { 
-        buffers: newBuffers, 
-        WAIT_STATUS: newWait, 
-        calculated: newCalculated,
-        number: newCalculated,
-        operator: newOperator, 
-      }
+    //   newState = { 
+    //     buffers: newBuffers, 
+    //     WAIT_STATUS: newWait, 
+    //     calculated: newCalculated,
+    //     number: newCalculated,
+    //     operator: newOperator, 
+    //   }
 
-    } else if (WAIT_STATUS === 'OPERATOR') {
-      newState = { operator: newOperator }
-    }
+    // } else if (WAIT_STATUS === 'OPERATOR') {
+    //   newState = { operator: newOperator }
+    // }
 
-    setState(newState)
+    // setState(newState)
   },
   c() {
-    setState({ 
-      calculated: '0',
-      operator: null,
-      number: '0', 
-      WAIT_STATUS: 'RESET', 
-      buffers: [],
-     })
+    // setState({ 
+    //   calculated: '0',
+    //   operator: null,
+    //   number: '0', 
+    //   WAIT_STATUS: 'RESET', 
+    //   buffers: [],
+    //  })
   },
   back() {
-    const { number, WAIT_STATUS } = getState()
+    // const { number, WAIT_STATUS } = getState()
 
-    if (WAIT_STATUS === 'OPERATOR') return
-    if (WAIT_STATUS === 'RESET') return
+    // if (WAIT_STATUS === 'OPERATOR') return
+    // if (WAIT_STATUS === 'RESET') return
 
-    const eranum = eraseLastNumber(number)
-    setState({ number: eranum })
+    // const eranum = eraseLastNumber(number)
+    // setState({ number: eranum })
   },
   equal() {
-    const { calculated, operator, number, WAIT_STATUS } = getState()
+    // const { calculated, operator, number, WAIT_STATUS } = getState()
 
-    let newCalculated = {}
+    // let newCalculated = {}
     
-    if (WAIT_STATUS === 'OPERATOR') {
-      newCalculated = calculated      
+    // if (WAIT_STATUS === 'OPERATOR') {
+    //   newCalculated = calculated      
 
-    } else {
-      newCalculated = calculate(calculated, operator, number)
-    }
+    // } else {
+    //   newCalculated = calculate(calculated, operator, number)
+    // }
     
-    setState({ 
-      calculated: '0',
-      operator: null,
-      number: newCalculated, 
-      WAIT_STATUS: 'RESET', 
-      buffers: [],
-    })
+    // setState({ 
+    //   calculated: '0',
+    //   operator: null,
+    //   number: newCalculated, 
+    //   WAIT_STATUS: 'RESET', 
+    //   buffers: [],
+    // })
   },
   ce() {
-    const { WAIT_STATUS, operator, buffers } = getState()
+    // const { WAIT_STATUS, operator, buffers } = getState()
 
-    const nextBuffers = (buffers, operator) => {
-      if (WAIT_STATUS !== 'OPERATOR') return buffers
-      return updateArray(buffers, operator)
-    }
+    // const nextBuffers = (buffers, operator) => {
+    //   if (WAIT_STATUS !== 'OPERATOR') return buffers
+    //   return updateArray(buffers, operator)
+    // }
 
-    const newBuffers = nextBuffers(buffers, operator)
+    // const newBuffers = nextBuffers(buffers, operator)
 
-    setState({
-      WAIT_STATUS: 'NUMBER',
-      number: '0',
-      buffers: newBuffers,
-    })
+    // setState({
+    //   WAIT_STATUS: 'NUMBER',
+    //   number: '0',
+    //   buffers: newBuffers,
+    // })
   },
   dot() {
-    const { number, WAIT_STATUS } = getState()
+    // const { number, WAIT_STATUS } = getState()
     
-    let state;
-    if (WAIT_STATUS === 'NUMBER') {
-      state = { number: concatNumber(number, '.') }
-    } else if (WAIT_STATUS === 'RESET') {
-      state = { 
-        number: concatNumber('0', '.'),
-        WAIT_STATUS: 'NUMBER',
-      }
-    }
+    // let state;
+    // if (WAIT_STATUS === 'NUMBER') {
+    //   state = { number: concatNumber(number, '.') }
+    // } else if (WAIT_STATUS === 'RESET') {
+    //   state = { 
+    //     number: concatNumber('0', '.'),
+    //     WAIT_STATUS: 'NUMBER',
+    //   }
+    // }
     
-    setState(state)
+    // setState(state)
   }, 
 }
 
@@ -342,31 +346,118 @@ document.addEventListener('keydown', e => {
 // })
 
 const hookMap = {
-  INPUT_OPERATION() {
+  INPUT_OPERATION(state, input) {
+    const { buffers, number, WAIT_STATUS, calculated, operator } = state
+
+    let newState
+    if (WAIT_STATUS === 'NUMBER' || WAIT_STATUS === 'RESET') {
+      const newCalculated = calculate(calculated, operator, number)
+      const newBuffers = updateArray(buffers, number)
+      const newWait = 'OPERATOR'
+      
+      newState = { 
+        buffers: newBuffers, 
+        WAIT_STATUS: newWait, 
+        calculated: newCalculated,
+        number: newCalculated,
+        operator: input, 
+      }
+    } else if (WAIT_STATUS === 'OPERATOR') {
+      newState = { operator: input }
+    } else {
+      newState = {}
+    }
+
+    return newState
+  },
+  INPUT_NUMBER(state, newnum) {
+    const { number, WAIT_STATUS, operator, buffers } = state
+
+    let newState
+    if (WAIT_STATUS === 'NUMBER') {
+      const connum = concatNumber(number, newnum)
+      newState = { number: connum }
+    } else if (WAIT_STATUS === 'OPERATOR') {  
+      const newBuffers = updateArray(buffers, operator)
+      newState = { WAIT_STATUS: 'NUMBER', number: newnum, buffers: newBuffers }
+    } else if (WAIT_STATUS === 'RESET') {
+      newState = {
+        WAIT_STATUS: 'NUMBER',
+        number: newnum,
+      }
+    } else {
+      newState = {}
+    }
+
+    return newState
+  },
+  INPUT_EQUAL(state) {
+    const { calculated, operator, number, WAIT_STATUS } = state
+
+    let newCalculated
+    if (WAIT_STATUS === 'OPERATOR') {
+      newCalculated = calculated      
+    } else {
+      newCalculated = calculate(calculated, operator, number)
+    }
     
+    setState({ 
+      calculated: '0',
+      operator: null,
+      number: newCalculated, 
+      WAIT_STATUS: 'RESET', 
+      buffers: [],
+    })
   },
-  INPUT_NUMBER() {
-
-  },
-  INPUT_EQUAL() {
-
-  },
-  INPUT_BACKSPACE() {
-
+  INPUT_BACKSPACE(state) {
+    const { number, WAIT_STATUS } = state
+    if (WAIT_STATUS === 'OPERATOR') return
+    if (WAIT_STATUS === 'RESET') return
+    const eranum = eraseLastNumber(number)
+    return { number: eranum }
   },
   INPUT_CLEAR() {
+    return { 
+      calculated: '0',
+      operator: null,
+      number: '0', 
+      WAIT_STATUS: 'RESET', 
+      buffers: [],
+    }
+  },
+  INPUT_CLEAR_ENTRY(state) {
+    const { WAIT_STATUS, operator, buffers } = state
+
+    const nextBuffers = (buffers, operator) => {
+      if (WAIT_STATUS !== 'OPERATOR') return buffers
+      return updateArray(buffers, operator)
+    }
+
+    const newBuffers = nextBuffers(buffers, operator)
+
+    return {
+      WAIT_STATUS: 'NUMBER',
+      number: '0',
+      buffers: newBuffers,
+    }
+  },
+  INPUT_DOT(state) {
+    const { number, WAIT_STATUS } = state
     
+    let newState
+    if (WAIT_STATUS === 'NUMBER') {
+      newState = { number: concatNumber(number, '.') }
+    } else if (WAIT_STATUS === 'RESET') {
+      newState = { 
+        number: concatNumber('0', '.'),
+        WAIT_STATUS: 'NUMBER',
+      }
+    } else {
+      newState = {}
+    }
+    
+    return newState
   },
-  INPUT_CLEAR_ENTRY() {
-
-  },
-  INPUT_DOT() {
-
-  },
-}
-
-const getNextState = (state, input) => {
-  
 }
 
 calculator.addEventListener('click', ({ target }) => {
