@@ -1,11 +1,3 @@
-// const operationBtns = document.querySelectorAll('.js-oper-btn')
-// const numberBtns = document.querySelectorAll('.js-num-btn')
-// const backBtn = document.querySelector('.js-back-btn')
-// const cBtn = document.querySelector('.js-c-btn')
-// const equalBtn = document.querySelector('.js-equal-btn')
-// const ceBtn = document.querySelector('.js-ce-btn')
-// const dotBtn = document.querySelector('.js-dot-btn')
-
 const calculator = document.querySelector('#calculator')
 
 const createRender = selectorMap => {
@@ -142,209 +134,6 @@ const calculate = (oldstr, op, newstr) => {
   return `${fixed}`
 }
 
-const onClickButton = {
-  number(newnum) {
-    // const { number, WAIT_STATUS, operator, buffers } = getState()
-
-    // let newState = {}
-
-    // if (WAIT_STATUS === 'NUMBER') {
-    //   const connum = concatNumber(number, newnum)
-    //   newState = { number: connum }
-      
-    // } else if (WAIT_STATUS === 'OPERATOR') {  
-    //   const newBuffers = updateArray(buffers, operator)
-    //   newState = { WAIT_STATUS: 'NUMBER', number: newnum, buffers: newBuffers }
-
-    // } else if (WAIT_STATUS === 'RESET') {
-    //   newState = {
-    //     WAIT_STATUS: 'NUMBER',
-    //     number: newnum,
-    //   }
-    // }
-
-    // setState(newState)
-  },
-  operator(newOperator) {
-    // const { buffers, number, WAIT_STATUS, calculated, operator } = getState()
-
-    // let newState = {}
-
-    // if (WAIT_STATUS === 'NUMBER' || WAIT_STATUS === 'RESET') {
-    //   const newCalculated = calculate(calculated, operator, number)
-    //   const newBuffers = updateArray(buffers, number)
-    //   const newWait = 'OPERATOR'
-      
-    //   newState = { 
-    //     buffers: newBuffers, 
-    //     WAIT_STATUS: newWait, 
-    //     calculated: newCalculated,
-    //     number: newCalculated,
-    //     operator: newOperator, 
-    //   }
-
-    // } else if (WAIT_STATUS === 'OPERATOR') {
-    //   newState = { operator: newOperator }
-    // }
-
-    // setState(newState)
-  },
-  c() {
-    // setState({ 
-    //   calculated: '0',
-    //   operator: null,
-    //   number: '0', 
-    //   WAIT_STATUS: 'RESET', 
-    //   buffers: [],
-    //  })
-  },
-  back() {
-    // const { number, WAIT_STATUS } = getState()
-
-    // if (WAIT_STATUS === 'OPERATOR') return
-    // if (WAIT_STATUS === 'RESET') return
-
-    // const eranum = eraseLastNumber(number)
-    // setState({ number: eranum })
-  },
-  equal() {
-    // const { calculated, operator, number, WAIT_STATUS } = getState()
-
-    // let newCalculated = {}
-    
-    // if (WAIT_STATUS === 'OPERATOR') {
-    //   newCalculated = calculated      
-
-    // } else {
-    //   newCalculated = calculate(calculated, operator, number)
-    // }
-    
-    // setState({ 
-    //   calculated: '0',
-    //   operator: null,
-    //   number: newCalculated, 
-    //   WAIT_STATUS: 'RESET', 
-    //   buffers: [],
-    // })
-  },
-  ce() {
-    // const { WAIT_STATUS, operator, buffers } = getState()
-
-    // const nextBuffers = (buffers, operator) => {
-    //   if (WAIT_STATUS !== 'OPERATOR') return buffers
-    //   return updateArray(buffers, operator)
-    // }
-
-    // const newBuffers = nextBuffers(buffers, operator)
-
-    // setState({
-    //   WAIT_STATUS: 'NUMBER',
-    //   number: '0',
-    //   buffers: newBuffers,
-    // })
-  },
-  dot() {
-    // const { number, WAIT_STATUS } = getState()
-    
-    // let state;
-    // if (WAIT_STATUS === 'NUMBER') {
-    //   state = { number: concatNumber(number, '.') }
-    // } else if (WAIT_STATUS === 'RESET') {
-    //   state = { 
-    //     number: concatNumber('0', '.'),
-    //     WAIT_STATUS: 'NUMBER',
-    //   }
-    // }
-    
-    // setState(state)
-  }, 
-}
-
-
-document.addEventListener('keydown', e => {
-  console.log(state)
-  
-  const key = e.key
-  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-  const operations = ['+', '-', '*', '/']
-  const esc = 'Escape'
-
-  if (numbers.includes(key)) {
-    onClickButton.number(key)
-    render(state)
-    return
-  }
-
-  if (operations.includes(key)) {
-    onClickButton.operator(key)
-    render(state)
-    return
-  }
-
-  if (key === '=' || key === 'Enter') {
-    onClickButton.equal()
-    render(state)
-    return
-  }
-
-  if (key === 'Backspace') {
-    onClickButton.back()
-    render(state)
-    return
-  }
-
-  if (key === esc) {
-    onClickButton.c()
-    render(state)
-    return
-  }
-
-  if (key === '.') {
-    onClickButton.dot()
-    render(state)
-    return
-  }
-})
-
-// operationBtns.forEach(el => el.addEventListener('click', e => {
-//   console.log(state)
-//   const op = e.target.textContent
-//   onClickButton.operator(op)
-//   render(state)
-// }))
-
-// numberBtns.forEach(el => el.addEventListener('click', e => {
-//   console.log(state)
-//   const number = e.target.textContent
-//   onClickButton.number(number)
-//   render(state)
-// }))
-
-// backBtn.addEventListener('click', e => {
-//   onClickButton.back()
-//   render(state)
-// })
-
-// cBtn.addEventListener('click', e => {
-//   onClickButton.c()
-//   render(state)
-// })
-
-// equalBtn.addEventListener('click', e => {
-//   onClickButton.equal()
-//   render(state)
-// })
-
-// dotBtn.addEventListener('click', e => {
-//   onClickButton.dot()
-//   render(state)
-// })
-
-// ceBtn.addEventListener('click', e => {
-//   onClickButton.ce()
-//   render(state)
-// })
-
 const hookMap = {
   INPUT_OPERATION(state, input) {
     const { buffers, number, WAIT_STATUS, calculated, operator } = state
@@ -461,6 +250,7 @@ const hookMap = {
 }
 
 calculator.addEventListener('click', ({ target }) => {
+  target.blur()
   const hook = target.dataset.hook
   if (!hook) return
   const input = target.dataset.input
@@ -470,12 +260,34 @@ calculator.addEventListener('click', ({ target }) => {
   setState(next)
 })
 
-// calculator.addEventListener('keydown', ev => {
+document.addEventListener('keydown', e => {
+  const input = e.key
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  const operations = ['+', '-', '*', '/']
+  const equals = ['=', 'Enter']
+  const esc = 'Escape'
+  const backspace = 'Backspace'
+  const dot = '.'
 
-// })
+  let hook
+  if (numbers.includes(input)) {
+    hook = 'INPUT_NUMBER'
+  } else if (operations.includes(input)) {
+    hook = 'INPUT_OPERATION'
+  } else if (equals.includes(input)) {
+    hook = 'INPUT_EQUAL'
+  } else if (input === esc) {
+    hook = 'INPUT_CLEAR'
+  } else if (input === backspace) {
+    hook = 'INPUT_BACKSPACE'
+  } else if (input === dot) {
+    hook = 'INPUT_DOT'
+  } else {
+    return
+  }
 
-
-/*
-  할 일 목록
-    리팩토링
-*/
+  const getNextState = hookMap[hook]
+  const prev = getState()
+  const next = getNextState(prev, input)
+  setState(next)
+})
