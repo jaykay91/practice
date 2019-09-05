@@ -39,22 +39,42 @@ const createStore = (initState, render) => {
   }
 }
 
-const $map = [
+const actionMap = [
+  {
+    action: 'CHANGE_TODO',
+    selectors: {
+      todoContainer: '.js-TodoContainer',
+    },
+    render: ({ todoList }, { todoContainer }) => {
+      const lastTodo = todoList.slice(-1)[0]
+      const todo = document.createElement('div')
+      let content = 
+                  `<div><input type="checkbox"><span>${lastTodo}</span></div>`
+      content += `<div><button>수정</button><button>삭제</button></div>`
+      todo.innerHTML = content
+      todoContainer.append(todo)        
+    }
+  },
 ]
 
 const state = {
   inputValue: '',
+  todoList: [],
 }
 const render = createRender($map)
 const store = createStore(state, render)
 
-const actionMap = {
-  'MODIFY_TODO_NAME': (state, target) => {
+const hookMap = {
+  changeValue: (state, target) => {
     return { inputValue: target.value }
   },
-  'ADD_TODO': ({ inputValue }) => {
-    console.log(inputValue)
+  addTodo: ({ todoList, inputValue }) => {
+    return { todoList: [...todoList, inputValue] }    
+  },
+  deleteTodo: (state) => {
 
+  },
+  modifyTodo: (state) => {
 
   },
 }
