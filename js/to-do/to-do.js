@@ -61,7 +61,7 @@ const actionMap = [
   {
     action: 'CHANGE_VALUE',
     selectors: {
-      
+
     }
   },
 ]
@@ -89,8 +89,27 @@ const hookMap = {
 }
 
 document.querySelectorAll('[class^="js-"]').forEach(el => {
-  const hook = el.dataset.hook
-  const event = el.dataset.event
+  // const hook = el.dataset.hook
+  const action = el.dataset.event
+
+  (() => {
+    const string = 'addTodo'
+    let upperIdx
+    for (const idx in string) {
+      const char = string[idx]
+      
+      if (char === char.toUpperCase()) {
+        upperIdx = idx
+        break
+          }
+      }
+    const lower = string.slice(0, upperIdx)
+    const upper = string.slice(upperIdx)
+    return [lower, upper]
+  })()
+
+  
+  
   el.addEventListener(event, e => {
     const prev = store.getState()
     const action = hookMap[hook](prev, e.target)
