@@ -11,10 +11,10 @@
     <h1 class="Title">To-Do LIST</h1>
     <div class="Container">
       <div class="InputBox">
-        <input class="js-InputBox-input" type="text" data-event="inputInputBox">
-        <button class="js-InputBox-button" data-event="clickInputButton">추가</button>
+        <input class="js-InputBox_input" type="text" data-hook="input;CHANGE_VALUE">
+        <button class="js-InputBox_button" data-hook="click;ADD_TODO">추가</button>
       </div>
-      <div class="TodoContainer js-TodoContainer">
+      <div class="TodoContainer js-TodoContainer" data-hook="click;CONTROL_TODO">
       <!-- 
         <div>
           <input type="checkbox">
