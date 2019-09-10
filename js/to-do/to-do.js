@@ -92,10 +92,43 @@ actionMap.setAction('ADD_TODO', ({ todoList, inputValue }) => {
   updateValue.call(this, state)
 })
 
-actionMap.setAction('CONTROL_TODO', function (state) {
-  console.log(this.target)
+actionMap.setAction('CONTROL_TODO', function ({ todoList }) {
+  const todoDataStr = this.target.dataset.todo
+  if (!todoDataStr) return
+
+  const todoData = JSON.parse(todoDataStr)
+  const { event, target } = todoData
+  const targetDom = document.querySelector(`.Todo_item${target}`)
+
+  if (event === 'modify') {
+
+    return
+  }
+
+  if (event === 'check') {
+
+    return
+  }
+
+  if (event === 'delete') {
+    const newTodoList = [
+      ...todoList.slice(0, target),
+      ...todoList.slice(target + 1)
+    ]
+    return { todoList: newTodoList }
+  }
+}, function (state) {
+  refreshTodo.call(this, state)
 })
 
+actionMap.setAction('DELETE_ALL_TODO', () => ({ todoList: [] })
+, function (state) {
+  refreshTodo.call(this, state)
+})
+
+actionMap.setAction('INIT', function (state) {
+  refreshTodo.call(this, state)
+})
 
 actionMap.setAction('CHANGE_VALUE', function () {
   return { inputValue: this.target.value }
@@ -108,12 +141,32 @@ function updateValue({ inputValue }) {
 
 function refreshTodo({ todoList }) {
   const { TodoContainer } = this
-  const TodoList = todoList.map(content => `
-    <div>
-      <div><input type="checkbox"><span>${content}</span></div>
-      <div><button>수정</button><button>삭제</button></div>
-    </div>
-  `).join('')
+  const TodoList = todoList.map((content, i) => {
+    const makeTodoData = (event, target) => 
+      JSON.stringify({ event, target }).replace(/"/g, '&quot;')
+    const todo = `
+      <div class="Todo_item${i}">
+        <div><input type="checkbox" data-todo="${makeTodoData('check', i)}"><span>${content}</span></div>
+        <div>
+          <button data-todo="${makeTodoData('modify', i)}">수정</button>
+          <button data-todo="${makeTodoData('delete', i)}">삭제</button>
+        </div>
+      </div>
+    `
+    return todo
+  }).join('')
 
   TodoContainer.innerHTML = TodoList
 }
+
+store.setState({ 
+  todoList: [
+    'play game',
+    'play music',
+    'coding',
+    'study',
+    'reading',
+  ] 
+})
+
+actionMap.useAction('INIT')
