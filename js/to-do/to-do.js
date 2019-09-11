@@ -24,11 +24,11 @@ class ActionMap {
   domMap = {}
   functionMap = {}
 
-  async useAction(action, ...args) {
+  async useAction(action, target) {
     const functions = this.functionMap[action]
     for (const func of functions) {
       const state = this.store.getState()
-      const result = await func.call(this.domMap, state)
+      const result = await func.call(this.domMap, state, target)
       if (result) {
         if (typeof result === 'object') {
           this.store.setState(result)
@@ -49,12 +49,10 @@ const actionMap = new ActionMap(store)
 
 document.querySelectorAll('[class*="js-"]').forEach(el => {
   const hook = el.dataset.hook
-  
   if (hook) {
     const [event, action] = hook.split(';')
     el.addEventListener(event, e => {
-      actionMap.domMap.target = e.target
-      actionMap.useAction(action)
+      actionMap.useAction(action, e.target)
     })
   }
 
@@ -92,28 +90,32 @@ actionMap.setAction('ADD_TODO', ({ todoList, inputValue }) => {
   updateValue.call(this, state)
 })
 
-actionMap.setAction('CONTROL_TODO', function ({ todoList }) {
-  const todoDataStr = this.target.dataset.todo
+actionMap.setAction('CHANGE_TODO', function ({ todoList }, target) {
+  const todoDataStr = target.dataset.todo
   if (!todoDataStr) return
 
   const todoData = JSON.parse(todoDataStr)
-  const { event, target } = todoData
-  const targetDom = document.querySelector(`.Todo_item${target}`)
+  const { event, index } = todoData
 
   if (event === 'modify') {
-
+    console.log(`Modify: ${index}`)
     return
   }
 
   if (event === 'check') {
-
-    return
+    const { content, checked } = todoList[index]
+    const newTodoList = [
+      ...todoList.slice(0, index),
+      { content, checked: !checked },
+      ...todoList.slice(index + 1)
+    ]
+    return { todoList: newTodoList }
   }
 
   if (event === 'delete') {
     const newTodoList = [
-      ...todoList.slice(0, target),
-      ...todoList.slice(target + 1)
+      ...todoList.slice(0, index),
+      ...todoList.slice(index + 1)
     ]
     return { todoList: newTodoList }
   }
@@ -130,8 +132,8 @@ actionMap.setAction('INIT', function (state) {
   refreshTodo.call(this, state)
 })
 
-actionMap.setAction('CHANGE_VALUE', function () {
-  return { inputValue: this.target.value }
+actionMap.setAction('CHANGE_VALUE', (state, target) => {
+  return { inputValue: target.value }
 })
 
 function updateValue({ inputValue }) {
@@ -141,12 +143,15 @@ function updateValue({ inputValue }) {
 
 function refreshTodo({ todoList }) {
   const { TodoContainer } = this
-  const TodoList = todoList.map((content, i) => {
-    const makeTodoData = (event, target) => 
-      JSON.stringify({ event, target }).replace(/"/g, '&quot;')
+  const TodoList = todoList.map(({ content, checked }, i) => {
+    const makeTodoData = (event, index) => 
+      JSON.stringify({ event, index }).replace(/"/g, '&quot;')
     const todo = `
       <div class="Todo_item${i}">
-        <div><input type="checkbox" data-todo="${makeTodoData('check', i)}"><span>${content}</span></div>
+        <div>
+          <input type="checkbox" data-todo="${makeTodoData('check', i)}" ${checked ? 'checked' : ''}>
+          <span>${content}</span>
+        </div>
         <div>
           <button data-todo="${makeTodoData('modify', i)}">수정</button>
           <button data-todo="${makeTodoData('delete', i)}">삭제</button>
@@ -161,11 +166,11 @@ function refreshTodo({ todoList }) {
 
 store.setState({ 
   todoList: [
-    'play game',
-    'play music',
-    'coding',
-    'study',
-    'reading',
+    { content: 'play game', checked: true },
+    { content: 'play music', checked: false },
+    { content: 'coding', checked: true },
+    { content: 'study', checked: false },
+    { content: 'reading', checked: false },
   ] 
 })
 
