@@ -97,9 +97,15 @@ actionMap.setAction('CHANGE_TODO', function ({ todoList }, target) {
   const todoData = JSON.parse(todoDataStr)
   const { event, index } = todoData
 
+  if (event === 'modifyReady' || event === 'modifyCancel') {
+    console.log(`Modify: ${index}`)
+    changeModifyView.call(this, index, event)
+    return false
+  }
+
   if (event === 'modify') {
     console.log(`Modify: ${index}`)
-    return
+
   }
 
   if (event === 'check') {
@@ -136,6 +142,32 @@ actionMap.setAction('CHANGE_VALUE', (state, target) => {
   return { inputValue: target.value }
 })
 
+function changeModifyView(index, event) {
+  const { TodoContainer } = this
+  const TodoItem = TodoContainer.children[index]
+  const contentEl = TodoItem.querySelector('.TodoItem_content')
+  const content = contentEl.textContent
+  if (event === 'modifyReady') {
+    const modifyButton = TodoItem.querySelector('[data-todo*="modifyReady"]')
+    const cancelButton = document.createElement('button')
+    cancelButton.textContent = '취소'
+    cancelButton.dataset.todo = makeTodoData('cancelModify', index)
+    modifyButton.replaceWith(cancelButton)
+    
+    // const checkButton 
+    
+    const modifyView = `
+      <input type="text" value="${content}">
+    `
+    contentEl.innerHTML = modifyView
+  } else {
+
+
+
+
+  }
+} 
+
 function updateValue({ inputValue }) {
   const { InputBox_input } = this
   InputBox_input.value = inputValue
@@ -144,17 +176,15 @@ function updateValue({ inputValue }) {
 function refreshTodo({ todoList }) {
   const { TodoContainer } = this
   const TodoList = todoList.map(({ content, checked }, i) => {
-    const makeTodoData = (event, index) => 
-      JSON.stringify({ event, index }).replace(/"/g, '&quot;')
     const todo = `
-      <div class="Todo_item${i}">
+      <div class="TodoItem">
         <div>
-          <input type="checkbox" data-todo="${makeTodoData('check', i)}" ${checked ? 'checked' : ''}>
-          <span>${content}</span>
+          <input type="checkbox" data-todo="${makeTodoData('check', i).replace(/"/g, '&quot;')}" ${checked ? 'checked' : ''}>
+          <span class="TodoItem_content">${content}</span>
         </div>
         <div>
-          <button data-todo="${makeTodoData('modify', i)}">수정</button>
-          <button data-todo="${makeTodoData('delete', i)}">삭제</button>
+          <button data-todo="${makeTodoData('modifyReady', i).replace(/"/g, '&quot;')}">수정</button>
+          <button data-todo="${makeTodoData('delete', i).replace(/"/g, '&quot;')}">삭제</button>
         </div>
       </div>
     `
@@ -162,6 +192,10 @@ function refreshTodo({ todoList }) {
   }).join('')
 
   TodoContainer.innerHTML = TodoList
+}
+
+function makeTodoData(event, index) {
+  return JSON.stringify({ event, index })
 }
 
 store.setState({ 
