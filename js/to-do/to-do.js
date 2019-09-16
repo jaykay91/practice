@@ -99,13 +99,20 @@ actionMap.setAction('CHANGE_TODO', function ({ todoList }, target) {
 
   if (event === 'modifyReady' || event === 'modifyCancel') {
     console.log(`Modify: ${index}`)
-    changeModifyView.call(this, index, event)
+    changeModifyView.call(this, todoData, todoList)
     return false
   }
 
-  if (event === 'modify') {
+  if (event === 'modifyOK') {
     console.log(`Modify: ${index}`)
-
+    const { TodoContainer } = this
+    const content = TodoContainer.children[index].querySelector('input[type="text"]').value
+    const newTodoList = [
+      ...todoList.slice(0, index),
+      { ...todoList[index], content },
+      ...todoList.slice(index + 1)
+    ]
+    return { todoList: newTodoList }
   }
 
   if (event === 'check') {
@@ -142,7 +149,8 @@ actionMap.setAction('CHANGE_VALUE', (state, target) => {
   return { inputValue: target.value }
 })
 
-function changeModifyView(index, event) {
+function changeModifyView(todoData, todoList) {
+  const { event, index } = todoData
   const { TodoContainer } = this
   const TodoItem = TodoContainer.children[index]
   const contentEl = TodoItem.querySelector('.TodoItem_content')
@@ -151,20 +159,21 @@ function changeModifyView(index, event) {
     const modifyButton = TodoItem.querySelector('[data-todo*="modifyReady"]')
     const cancelButton = document.createElement('button')
     cancelButton.textContent = '취소'
-    cancelButton.dataset.todo = makeTodoData('cancelModify', index)
+    cancelButton.dataset.todo = makeTodoData('modifyCancel', index)
     modifyButton.replaceWith(cancelButton)
-    
-    // const checkButton 
-    
     const modifyView = `
       <input type="text" value="${content}">
+      <button data-todo="${makeTodoData('modifyOK', index).replace(/"/g, '&quot;')}">수정</button>
     `
     contentEl.innerHTML = modifyView
   } else {
-
-
-
-
+    const cancelButton = TodoItem.querySelector('[data-todo*="modifyCancel"]')
+    const modifyButton = document.createElement('button')
+    modifyButton.textContent = '수정'
+    modifyButton.dataset.todo = makeTodoData('modifyReady', index)
+    cancelButton.replaceWith(modifyButton)
+    const { content } = todoList[index]
+    contentEl.textContent = content
   }
 } 
 
