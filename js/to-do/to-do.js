@@ -84,7 +84,8 @@ document.querySelectorAll('[class*="js-"]').forEach(el => {
 
 actionMap.setAction('ADD_TODO', ({ todoList, inputValue }) => {
   if (!inputValue) return null
-  return { todoList: [...todoList, inputValue], inputValue: '' }
+  const todoData = { content: inputValue, checked: false }
+  return { todoList: [...todoList, todoData], inputValue: '' }
 }, function (state) {
   refreshTodo.call(this, state)
   updateValue.call(this, state)
