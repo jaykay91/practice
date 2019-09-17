@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Notepad</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <style>
+    .Notepad {
+      width: 100vm;
+      height: 100vh;
+    }
+
+    .Notepad-body {
+      height: calc(100vh - 50px);
+    }
+
+    .Notepad-header {
+      height: 50px;
+    }
+
+    .InputArea-cursor {
+      background: black;
+      display: inline-block;
+      width: 1px;
+      height: 15px;
+      position: fixed;
+      left: 200px;
+      
+    }
+  </style>
+</head>
+<body>
+  <div class="Notepad">
+    <div class="Notepad-header">
+      <h1>Notepad</h1>
+    </div>
+    <div class="Notepad-body InputArea js-InputArea" data-event="click;clickInputArea">
+      <div class="InputArea-cursor" data-targeted="cursor" style="display: none;"></div>
+      <div class="InputArea-row">Hello, World!</div>
+    </div>
+  </div>
+  <script src="./notepad.js"></script>
+</body>
+</html>
