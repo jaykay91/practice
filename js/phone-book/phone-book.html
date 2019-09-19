@@ -18,6 +18,11 @@
       padding: 10px;
     }
 
+    .PhoneBook-menu {
+      height: calc(100vh - 84px);
+      overflow: auto;
+    }
+
     .PhoneBook-content {
       margin: 20px;
     }
@@ -35,20 +40,17 @@
         <h1 class="title">전화번호부</h1>
       </div>
       <div class="PhoneBook-button column">
-        <button class="button is-primary">등록하기</button>
+        <button class="button is-primary" data-event="click;toggleModal">등록하기</button>
       </div>
     </div>
     <div class="columns is-mobile">
       <div class="column is-4">
-        <div class="PhoneBook-menu">
+        <div class="PhoneBook-menu js-Menu" data-event="click;selectPhone">
           <aside class="menu">
             <p class="menu-label">
               목록
             </p>
-            <ul class="menu-list">
-              <li><a class="is-active">JK</a></li>
-              <li><a>Hello</a></li>
-            </ul>
+            <ul class="menu-list" data-targeted="js-Menu;list"></ul>
           </aside>
         </div>
       </div>
@@ -81,5 +83,43 @@
       </div>
     </div>
   </div>
+
+<!-- 
+  <div class="modal js-Message">
+    <div class="modal-background" data-event="click;closeMessage"></div>
+    <div class="modal-content">
+      <article class="message">
+        <div class="message-header" data-targeted="js-Message;header">
+          Hello
+        </div>
+        <div class="message-body" data-targeted="js-Message;body"></div>
+      </article>
+    </div>
+    <button class="modal-close is-large" aria-label="close" data-event="click;closeMessage"></button>
+  </div>
+
+
+  <div class="modal js-Modal">
+    <div class="modal-background" data-event="click;toggleModal"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">전화번호 등록</p>
+      </header>
+      <section class="modal-card-body" data-targeted="js-Modal;body">
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-success">등록</button>
+        <button class="button" data-event="click;toggleModal">취소</button>
+      </footer>
+    </div>
+    <button class="modal-close is-large" aria-label="close" data-event="click;toggleModal"></button>
+  </div> -->
+
+
+
+
+  
+  
+  <script src="./phone-book.js"></script>
 </body>
 </html>
