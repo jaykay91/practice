@@ -28,8 +28,24 @@ class Modal extends Component {
   }
 }
 
+class Content extends Component {
+  selectedPhone = null
+
+  change(phone) {
+    const { info } = this.targets
+    info.innerHTML = `
+      <strong>${phone.phoneNumber}</strong>
+      <p>${phone.name}</p>
+      <p>${phone.info}</p>
+    `
+    this.selectPhone = phone
+  }  
+
+}
+
 class Menu extends Component {
   selected = null
+
   add(data) {
     const { phoneNumber } = data
     const { list } = this.targets
@@ -44,6 +60,10 @@ class Menu extends Component {
     if (this.selected) this.selected.classList.remove('is-active')
     target.classList.add('is-active')
     this.selected = target
+  }
+
+  getSelectedPhone() {
+    return this.selected && JSON.parse(this.selected.parentElement.dataset.phone)
   }
 }
 
@@ -94,8 +114,10 @@ class ActionMap {
   }
 
   selectPhone(target) {
-    const { menu } = this.components
+    const { menu, content } = this.components
     menu.select(target)
+    const phone = menu.getSelectedPhone()
+    content.change(phone)
   }
 }
 
@@ -126,13 +148,15 @@ const makeDummyData = (n) => {
 }
 
 const store = {
-  phoneList: makeDummyData(20),
+  phoneList: makeDummyData(10),
+  
 }
 
 const actionMap = new ActionMap({
   Modal,
   Message,
   Menu,
+  Content,
 }, store)
 
 document.querySelectorAll('[class*="js-"]').forEach(el => {
