@@ -1,46 +1,42 @@
 class Component {
   constructor(self) {
     this.self = self
-    const selector = [...this.self.classList].find(name => name.startsWith('js-'))
-    this.targets = [...document.querySelectorAll(`[data-targeted^="${selector}"]`)]
+    this.targets = [...self.querySelectorAll(`[data-targeted]`)]
       .reduce((acc, el) => {
-        const [_, name] = el.dataset.targeted.split(';')
+        const name = el.dataset.targeted
         acc[name] = el
         return acc
       }, {})
   }
 }
 
-class Message extends Component {
-  toggle(content) {
-    if (content) {
-      const { header, body } = this.targets
-      header.textContent = content.title
-      body.textContent = content.body
-    }
-    this.self.classList.toggle('is-active')
-  }
-}
-
 class Modal extends Component {
-  toggle() {
-    this.self.classList.toggle('is-active')
+  show({ type, content }) {
+    const { modalBody, message, messageBody, card, cardBody } = this.targets
+    modalBody.innerHTML = ''
+    if (type === 'message') {
+      modalBody.append(message)
+      messageBody.textContent = content
+    } else {
+      modalBody.append(card)
+      cardBody.textContent = content
+    }
+    this.self.classList.add('is-active')
+  }
+
+  close() {
+    this.self.classList.remove('is-active')
   }
 }
 
-class Content extends Component {
-  selectedPhone = null
-
+class PhoneView extends Component {
   change(phone) {
-    const { info } = this.targets
-    info.innerHTML = `
+    const { body } = this.targets
+    body.innerHTML = `
       <strong>${phone.phoneNumber}</strong>
-      <p>${phone.name}</p>
-      <p>${phone.info}</p>
+      <p>${phone.name}<br>${phone.info}</p>
     `
-    this.selectPhone = phone
   }  
-
 }
 
 class Menu extends Component {
@@ -67,7 +63,7 @@ class Menu extends Component {
   }
 }
 
-class ActionMap {
+class App {
   constructor(components, store) {
     this.components = components
     this.store = store
@@ -78,7 +74,7 @@ class ActionMap {
     if (Comp) {
       const thisEl = document.querySelector(`.js-${componentName}`)
       delete this.components[componentName]
-      this.components[componentName.toLowerCase()] = new Comp(thisEl)
+      this.components[`${componentName[0].toLowerCase()}${componentName.slice(1)}`] = new Comp(thisEl)
     }
   }
 
@@ -91,33 +87,32 @@ class ActionMap {
   }
 
   registerPhone() {
-    // const { modal } = this.components
-    // modal.toggle()    
+
   }
 
-  toggleModal() {
+  modifyPhone() {
+
+  }
+
+  deletePhone() {
+
+  }
+
+  showCard() {
     const { modal } = this.components
-    modal.toggle()
+    modal.show({ type: 'card', content: '등록하기' })
+  }
+
+  closeModal() {
+    const { modal } = this.components
+    modal.close()
   }
   
-  showMessage() {
-    const { message } = this.components
-    message.toggle({
-      title: 'Hello, Modal!',
-      body: 'Good!',
-    })
-  }
-
-  closeMessage() {
-    const { message } = this.components
-    message.toggle()
-  }
-
   selectPhone(target) {
-    const { menu, content } = this.components
+    const { menu, phoneView } = this.components
     menu.select(target)
     const phone = menu.getSelectedPhone()
-    content.change(phone)
+    phoneView.change(phone)
   }
 }
 
@@ -149,28 +144,27 @@ const makeDummyData = (n) => {
 
 const store = {
   phoneList: makeDummyData(10),
-  
+  selectedPhone: null,
 }
 
-const actionMap = new ActionMap({
+const app = new App({
   Modal,
-  Message,
   Menu,
-  Content,
+  PhoneView,
 }, store)
 
 document.querySelectorAll('[class*="js-"]').forEach(el => {
   const componentName = [...el.classList]
     .find(name => name.includes('js-'))
     .replace('js-', '')
-  actionMap.setComponent(componentName)
+  app.setComponent(componentName)
 })
 
 document.querySelectorAll('[data-event]').forEach(el => {
   const [event, action] = el.dataset.event.split(';')
   el.addEventListener(event, e => {
-    actionMap[action](e.target)
+    app[action](e.target)
   })
 })
 
-actionMap.init()
+app.init()
