@@ -12,14 +12,16 @@ class Component {
 
 class Modal extends Component {
   show({ type, content }) {
-    const { modalBody, message, messageBody, card, cardBody } = this.targets
+    const { modalBody, message, messageBody, card, cardBody, notification } = this.targets
     modalBody.innerHTML = ''
     if (type === 'message') {
       modalBody.append(message)
       messageBody.textContent = content
-    } else {
+    } else if (type === 'card') {
       modalBody.append(card)
       cardBody.textContent = content
+    } else {
+      modalBody.append(notification)
     }
     this.self.classList.add('is-active')
   }
@@ -31,16 +33,30 @@ class Modal extends Component {
 
 class PhoneView extends Component {
   change(phone) {
-    const { body } = this.targets
-    body.innerHTML = `
-      <strong>${phone.phoneNumber}</strong>
-      <p>${phone.name}<br>${phone.info}</p>
-    `
+    const { content, body, message } = this.targets
+    if (phone) {
+      message.classList.add('is-hidden')
+      body.classList.remove('is-hidden')
+      content.innerHTML = `
+        <strong>${phone.phoneNumber}</strong> (${phone.name})
+        <p>${phone.info}</p>
+      `
+    } else {
+      message.classList.remove('is-hidden')
+      body.classList.add('is-hidden')
+    }
   }  
 }
 
 class Menu extends Component {
   selected = null
+
+  init(phoneList) {
+    this.targets.list.innerHTML = ''
+    for (const phone of phoneList) {
+      this.add(phone)
+    }
+  }
 
   add(data) {
     const { phoneNumber } = data
@@ -54,6 +70,7 @@ class Menu extends Component {
 
   select(target) {
     if (this.selected) this.selected.classList.remove('is-active')
+    if (target === this.selected || target === this.self) return this.selected = null
     target.classList.add('is-active')
     this.selected = target
   }
@@ -79,11 +96,10 @@ class App {
   }
 
   init() {
-    const { menu } = this.components
+    const { menu, phoneView } = this.components
     const { phoneList } = this.store
-    for (const phone of phoneList) {
-      menu.add(phone)
-    }
+    menu.init(phoneList)
+    phoneView.change(null)
   }
 
   registerPhone() {
@@ -91,11 +107,15 @@ class App {
   }
 
   modifyPhone() {
+    console.log(this.store.selectedPhone)
 
   }
 
   deletePhone() {
-
+    const { selectedPhone, phoneList } = this.store
+    const idx = phoneList.findIndex(phone => phone.phoneNumber === selectedPhone.phoneNumber)
+    phoneList.splice(idx, 1)
+    this.init()
   }
 
   showCard() {
@@ -113,6 +133,7 @@ class App {
     menu.select(target)
     const phone = menu.getSelectedPhone()
     phoneView.change(phone)
+    this.store.selectedPhone = phone
   }
 }
 
@@ -143,7 +164,7 @@ const makeDummyData = (n) => {
 }
 
 const store = {
-  phoneList: makeDummyData(10),
+  phoneList: makeDummyData(20),
   selectedPhone: null,
 }
 

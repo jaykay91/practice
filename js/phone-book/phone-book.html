@@ -33,6 +33,7 @@
     }
 
     .modal-content, .modal-card {
+      margin: 0;
       border-radius: 10px;
     }
   </style>
@@ -62,21 +63,24 @@
         <div class="PhoneBook-content js-PhoneView">
           <div class="box">
             <article class="media">
-              <div class="media-content">
-                <div class="content" data-targeted="body">
+              <div class="media-content" data-targeted="body">
+                <div class="content" data-targeted="content">
                   <!-- <strong>JK</strong>
                   <p></p> -->
                 </div>
                 <nav class="level is-mobile">
                   <div class="level-left">
                     <div class="level-item">
-                      <a class="button is-link">수정</a>
+                      <a class="button is-link" data-event="click;modifyPhone">수정</a>
                     </div>    
                     <div class="level-item">
-                      <a class="button is-danger">삭제</a>
+                      <a class="button is-danger" data-event="click;deletePhone">삭제</a>
                     </div>    
                   </div>
                 </nav>
+              </div>
+              <div class="is-hidden" data-targeted="message">
+                <p>전화번호를 클릭해주세요.</p>
               </div>
             </article>
           </div>
@@ -89,6 +93,13 @@
   <div class="modal js-Modal">
     <div class="modal-background" data-event="click;closeModal"></div>
     <div data-targeted="modalBody">
+      <div class="modal-content" data-targeted="notification">
+        <div class="notification">
+          Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Sit amet,
+          consectetur adipiscing elit
+        </div>
+      </div>
       <div class="modal-content" data-targeted="message">
         <article class="message">
           <div class="message-header">
