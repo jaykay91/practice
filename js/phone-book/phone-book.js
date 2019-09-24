@@ -1,27 +1,70 @@
 class Component {
   constructor(self) {
     this.self = self
-    this.targets = [...self.querySelectorAll(`[data-targeted]`)]
+    this.targets = [...self.querySelectorAll(`[data-target]`)]
       .reduce((acc, el) => {
-        const name = el.dataset.targeted
+        const name = el.dataset.target
         acc[name] = el
         return acc
       }, {})
   }
 }
 
+class Form extends Component {
+  init() {
+    this.self.username.value = ''
+    this.self.phoneNumber.value = ''
+    this.self.describe.value = ''
+  }
+
+  set({ name, info, phoneNumber }) {
+    this.self.username.value = name
+    this.self.phoneNumber.value = phoneNumber
+    this.self.describe.value = info
+  }
+
+  validate() {
+    return true
+  }
+
+  submit() {
+    const { username, phoneNumber, describe } = this.self
+    return {
+      name: username.value,
+      phoneNumber: phoneNumber.value,
+      info: describe.value,
+    }
+  }
+}
+
 class Modal extends Component {
   show({ type, content }) {
-    const { modalBody, message, messageBody, card, cardBody, notification } = this.targets
-    modalBody.innerHTML = ''
+    const { message, card, notification, body } = this.targets
+    body.innerHTML = ''
     if (type === 'message') {
-      modalBody.append(message)
+      const messageBody = message.querySelector('.message-body')
       messageBody.textContent = content
-    } else if (type === 'card') {
-      modalBody.append(card)
-      cardBody.textContent = content
+      body.append(message)
+    } else if (type === 'RegCard') {
+      const cardTitle = card.querySelector('.modal-card-title')
+      const regBtn = card.querySelector('[data-event$="registerPhone"]')
+      const modBtn = card.querySelector('[data-event$="modifyPhone"]')
+      cardTitle.textContent = content.header
+      regBtn.classList.remove('is-hidden')
+      modBtn.classList.add('is-hidden')
+      body.append(card)
+      card.querySelector('input[name="phoneNumber"]').disabled = false
+    } else if (type === 'ModCard') {
+      const cardTitle = card.querySelector('.modal-card-title')
+      const regBtn = card.querySelector('[data-event$="registerPhone"]')
+      const modBtn = card.querySelector('[data-event$="modifyPhone"]')
+      cardTitle.textContent = content.header
+      regBtn.classList.add('is-hidden')
+      modBtn.classList.remove('is-hidden')
+      body.append(card)
+      card.querySelector('input[name="phoneNumber"]').disabled = true
     } else {
-      modalBody.append(notification)
+      body.append(notification)
     }
     this.self.classList.add('is-active')
   }
@@ -70,7 +113,7 @@ class Menu extends Component {
 
   select(target) {
     if (this.selected) this.selected.classList.remove('is-active')
-    if (target === this.selected || target === this.self) return this.selected = null
+    if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
     target.classList.add('is-active')
     this.selected = target
   }
@@ -103,11 +146,19 @@ class App {
   }
 
   registerPhone() {
-
+    const { form, modal } = this.components
+    const { phoneList } = this.store
+    const newPhone = form.submit({ type: 'register' })
+    phoneList.push(newPhone)
+    this.init()
+    modal.close()
   }
 
   modifyPhone() {
-    console.log(this.store.selectedPhone)
+    // console.log(this.store.selectedPhone)
+    const { form, modal } = this.components
+    const newPhone = form.submit({ type: 'modify' })
+
 
   }
 
@@ -116,13 +167,31 @@ class App {
     const idx = phoneList.findIndex(phone => phone.phoneNumber === selectedPhone.phoneNumber)
     phoneList.splice(idx, 1)
     this.init()
+    this.store.selectedPhone = null
   }
 
-  showCard() {
-    const { modal } = this.components
-    modal.show({ type: 'card', content: '등록하기' })
+  showRegCard() {
+    const { modal, form } = this.components
+    form.init()
+    modal.show({ 
+      type: 'RegCard', 
+      content: {
+        header: '등록하기1',
+      }
+    })
   }
 
+  showModifyCard() {
+    const { modal, form } = this.components
+    form.set(this.store.selectedPhone)
+    modal.show({ 
+      type: 'ModCard', 
+      content: {
+        header: '수정하기',
+      }
+    })
+  }
+  
   closeModal() {
     const { modal } = this.components
     modal.close()
@@ -164,11 +233,12 @@ const makeDummyData = (n) => {
 }
 
 const store = {
-  phoneList: makeDummyData(20),
+  phoneList: makeDummyData(0),
   selectedPhone: null,
 }
 
 const app = new App({
+  Form,
   Modal,
   Menu,
   PhoneView,
