@@ -157,8 +157,10 @@ class App {
   modifyPhone() {
     // console.log(this.store.selectedPhone)
     const { form, modal } = this.components
-    const newPhone = form.submit({ type: 'modify' })
+    // const newPhone = form.submit({ type: 'modify' })
+    console.log(this.store.selectedPhone)
 
+    
 
   }
 
@@ -233,7 +235,7 @@ const makeDummyData = (n) => {
 }
 
 const store = {
-  phoneList: makeDummyData(0),
+  phoneList: makeDummyData(5),
   selectedPhone: null,
 }
 
