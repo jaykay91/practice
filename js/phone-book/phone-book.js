@@ -155,13 +155,19 @@ class App {
   }
 
   modifyPhone() {
+
     // console.log(this.store.selectedPhone)
     const { form, modal } = this.components
     // const newPhone = form.submit({ type: 'modify' })
-    console.log(this.store.selectedPhone)
-
+    // console.log(this.store.selectedPhone)
+    // console.log()
     
-
+    const newPhone = form.submit()
+    const { phoneList } = this.store
+    const index = phoneList.findIndex(phone => phone.phoneNumber === newPhone.phoneNumber)
+    phoneList.splice(index, 1, newPhone)
+    this.init()
+    modal.close()
   }
 
   deletePhone() {
