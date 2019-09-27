@@ -24,6 +24,12 @@ class Form extends Component {
   }
 
   validate() {
+    const { username, phoneNumber, describe } = this.self
+    console.log(username.value, phoneNumber.value, describe.value)
+
+    if (!username.value) return false
+    if (!phoneNumber.value) return false
+    if (!describe.value) return false
     return true
   }
 
@@ -148,20 +154,16 @@ class App {
   registerPhone() {
     const { form, modal } = this.components
     const { phoneList } = this.store
-    const newPhone = form.submit({ type: 'register' })
+    if (!form.validate()) return
+    const newPhone = form.submit()
     phoneList.push(newPhone)
     this.init()
     modal.close()
   }
 
   modifyPhone() {
-
-    // console.log(this.store.selectedPhone)
     const { form, modal } = this.components
-    // const newPhone = form.submit({ type: 'modify' })
-    // console.log(this.store.selectedPhone)
-    // console.log()
-    
+    if (!form.validate()) return
     const newPhone = form.submit()
     const { phoneList } = this.store
     const index = phoneList.findIndex(phone => phone.phoneNumber === newPhone.phoneNumber)
