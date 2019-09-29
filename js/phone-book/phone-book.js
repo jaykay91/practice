@@ -117,11 +117,23 @@ class Menu extends Component {
     list.append(liEl)
   }
 
+  // isPhone(target) {
+  //   if (target === this.selected || target === this.self || target.tagName === 'P') {
+  //     return false
+  //   }
+  //   return true
+  // }
+  
   select(target) {
+
     if (this.selected) this.selected.classList.remove('is-active')
-    if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
+    // if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
     target.classList.add('is-active')
     this.selected = target
+  }
+
+  getSelectedTarget() {
+
   }
 
   getSelectedPhone() {
