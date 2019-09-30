@@ -117,23 +117,16 @@ class Menu extends Component {
     list.append(liEl)
   }
 
-  // isPhone(target) {
-  //   if (target === this.selected || target === this.self || target.tagName === 'P') {
-  //     return false
-  //   }
-  //   return true
-  // }
-  
   select(target) {
-
     if (this.selected) this.selected.classList.remove('is-active')
-    // if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
+    if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
     target.classList.add('is-active')
     this.selected = target
   }
 
-  getSelectedTarget() {
-
+  getSelectedTarget(phone) {
+    return Array.from(this.self.querySelectorAll('a'))
+      .find(a => a.textContent === phone.phoneNumber)
   }
 
   getSelectedPhone() {
@@ -174,21 +167,26 @@ class App {
   }
 
   modifyPhone() {
-    const { form, modal } = this.components
+    const { form, modal, menu } = this.components
+    const { selectedPhone } = this.store
     if (!form.validate()) return
     const newPhone = form.submit()
     const { phoneList } = this.store
     const index = phoneList.findIndex(phone => phone.phoneNumber === newPhone.phoneNumber)
     phoneList.splice(index, 1, newPhone)
     this.init()
+    const target = menu.getSelectedTarget(selectedPhone)
+    this.selectPhone(target)
     modal.close()
   }
 
   deletePhone() {
+    const { menu } = this.components
     const { selectedPhone, phoneList } = this.store
     const idx = phoneList.findIndex(phone => phone.phoneNumber === selectedPhone.phoneNumber)
     phoneList.splice(idx, 1)
     this.init()
+    menu.selected = null
     this.store.selectedPhone = null
   }
 
