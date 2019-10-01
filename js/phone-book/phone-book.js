@@ -119,7 +119,7 @@ class Menu extends Component {
 
   select(target) {
     if (this.selected) this.selected.classList.remove('is-active')
-    if (target === this.selected || target === this.self || target.tagName === 'P') return this.selected = null
+    if (target.tagName !== 'A' || target === this.selected) return this.selected = null
     target.classList.add('is-active')
     this.selected = target
   }
